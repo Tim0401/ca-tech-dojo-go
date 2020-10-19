@@ -1,6 +1,7 @@
 package user
 
 import (
+	"ca-tech-dojo-go/pkg/cago/logic/user"
 	"fmt"
 	"net/http"
 )
@@ -8,8 +9,12 @@ import (
 // Create POST Only
 func Create(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, "/user/create")
+		if token, err := user.Create("token"); err != nil {
+			fmt.Println(err)
+		} else {
+			w.WriteHeader(http.StatusCreated)
+			fmt.Fprintf(w, token)
+		}
 		return
 	}
 	w.WriteHeader(http.StatusMethodNotAllowed)
