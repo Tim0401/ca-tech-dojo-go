@@ -5,17 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Remote",
+            "name": "Launch",
             "type": "go",
             "request": "launch",
-            "mode": "remote",
-            "remotePath": "/go/app/tmp", //コンテナ内のパス
-            "port": 2345, // dlv debugのポートを指定（WEBのポートではない）
-            "host": "localhost", //左の設定はToolBoxを使った場合のDocker MachineのIP. for Macの場合はlocalhostでよかった.
-            "program": "${workspaceRoot}", //${workspaceRoot} =　$GOPATH/src/github.com/user
+            "mode": "auto",
+            "program": "${fileDirname}",
             "env": {},
-            "args": [],
-            "showLog": true
+            "args": []
         }
     ]
 }
