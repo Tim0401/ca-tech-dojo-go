@@ -1,11 +1,12 @@
 ---- drop ----
-DROP TABLE IF EXISTS `test_table`;
+DROP TABLE IF EXISTS `user`;
 
 ---- create ----
-create table IF not exists `test_table`
+create table IF not exists `user`
 (
  `id`               INT(20) AUTO_INCREMENT,
  `name`             VARCHAR(20) NOT NULL,
+ `token`            VARCHAR(255) NOT NULL,
  `created_at`       Datetime DEFAULT NULL,
  `updated_at`       Datetime DEFAULT NULL,
     PRIMARY KEY (`id`)

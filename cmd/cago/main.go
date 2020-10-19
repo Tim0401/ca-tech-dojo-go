@@ -1,15 +1,11 @@
 package main
 
 import (
-	"ca-tech-dojo-go/internal/cago"
+	"ca-tech-dojo-go/pkg/cago"
 	"net/http"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	cago.Router(w, r)
-}
-
 func main() {
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/", cago.Router)
 	http.ListenAndServe(":8080", nil)
 }
