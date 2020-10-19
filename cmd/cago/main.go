@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
+	"ca-tech-dojo-go/internal/cago"
 	"net/http"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "hello world.")
+	cago.Router(w, r)
 }
 
 func main() {
