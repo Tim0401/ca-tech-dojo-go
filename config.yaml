@@ -1,0 +1,5 @@
+db :  
+ # dbドライバ
+ dbDriver : mysql
+ # db接続文字列
+ dsn : docker:docker@tcp(127.0.0.1:3306)/cago
