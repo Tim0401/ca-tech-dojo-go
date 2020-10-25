@@ -11,3 +11,5 @@ create table IF not exists `user`
  `updated_at`       Datetime DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+create UNIQUE INDEX token_index on user(token);
