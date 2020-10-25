@@ -53,6 +53,13 @@ func Router(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			fmt.Fprint(w, "Method not allowed.\n")
 		}
+	case "/user/update":
+		if r.Method == http.MethodPut {
+			uc.UpdateUser(w, r)
+		} else {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			fmt.Fprint(w, "Method not allowed.\n")
+		}
 	default:
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprint(w, "404 Not Found\n")

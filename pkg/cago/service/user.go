@@ -15,6 +15,7 @@ import (
 type UserService interface {
 	CreateUser(ctx context.Context, user *input.CreateUser) (output.CreateUser, error)
 	GetUser(ctx context.Context, user *input.GetUser) (output.GetUser, error)
+	UpdateUser(ctx context.Context, user *input.UpdateUser) (output.UpdateUser, error)
 }
 
 type userService struct {
@@ -76,5 +77,27 @@ func (us *userService) CreateUser(ctx context.Context, user *input.CreateUser) (
 	})
 
 	outputUser.Xtoken = modelUser.Token
+	return outputUser, err
+}
+
+func (us *userService) UpdateUser(ctx context.Context, user *input.UpdateUser) (output.UpdateUser, error) {
+
+	var outputUser output.UpdateUser
+
+	con, err := us.r.NewConnection()
+	if err != nil {
+		return outputUser, err
+	}
+	defer con.Close()
+
+	err = con.RunTransaction(func(tx repository.Transaction) error {
+		err := tx.User().UpdateNameByToken(user.Name, user.Xtoken)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
 	return outputUser, err
 }

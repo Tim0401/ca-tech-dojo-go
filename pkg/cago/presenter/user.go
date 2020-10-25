@@ -11,6 +11,7 @@ import (
 type UserPresenter interface {
 	CreateUser(ctx context.Context, user *output.CreateUser, w http.ResponseWriter)
 	GetUser(ctx context.Context, user *output.GetUser, w http.ResponseWriter)
+	UpdateUser(ctx context.Context, user *output.UpdateUser, w http.ResponseWriter)
 }
 
 type userPresenter struct {
@@ -29,9 +30,8 @@ func (up *userPresenter) GetUser(ctx context.Context, user *output.GetUser, w ht
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(res)
-
 	w.WriteHeader(http.StatusOK)
+	w.Write(res)
 }
 
 func (up *userPresenter) CreateUser(ctx context.Context, user *output.CreateUser, w http.ResponseWriter) {
@@ -43,7 +43,19 @@ func (up *userPresenter) CreateUser(ctx context.Context, user *output.CreateUser
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(res)
-
 	w.WriteHeader(http.StatusCreated)
+	w.Write(res)
+}
+
+func (up *userPresenter) UpdateUser(ctx context.Context, user *output.UpdateUser, w http.ResponseWriter) {
+	// output
+	res, err := json.Marshal(user)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNoContent)
+	w.Write(res)
 }

@@ -29,4 +29,5 @@ type UserCommand interface {
 	UserQuery
 
 	Create(user *model.User) error
+	UpdateNameByToken(name string, token string) error
 }

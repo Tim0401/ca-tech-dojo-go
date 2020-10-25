@@ -7,3 +7,8 @@ type CreateUser struct {
 type GetUser struct {
 	Xtoken string `json:"x-token"`
 }
+
+type UpdateUser struct {
+	Xtoken string `json:"x-token"`
+	Name   string `json:"name"`
+}

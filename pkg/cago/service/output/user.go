@@ -7,3 +7,5 @@ type CreateUser struct {
 type GetUser struct {
 	Name string `json:"name"`
 }
+
+type UpdateUser struct{}

@@ -53,3 +53,10 @@ func (r *dbUserRepository) Create(user *model.User) error {
 	_, err := tx.Exec(cmd, user.Name, user.Token, user.CreatedAt)
 	return err
 }
+
+func (r *dbUserRepository) UpdateNameByToken(name string, token string) error {
+	tx := r.tx
+	cmd := "UPDATE user SET name = ? WHERE token = ?"
+	_, err := tx.Exec(cmd, name, token)
+	return err
+}

@@ -12,6 +12,7 @@ import (
 type UserInteractor interface {
 	CreateUser(ctx context.Context, user *input.CreateUser, w http.ResponseWriter)
 	GetUser(ctx context.Context, user *input.GetUser, w http.ResponseWriter)
+	UpdateUser(ctx context.Context, user *input.UpdateUser, w http.ResponseWriter)
 }
 
 type userInteractor struct {
@@ -33,4 +34,10 @@ func (ui *userInteractor) CreateUser(ctx context.Context, user *input.CreateUser
 	// todo errチェック
 	outputUser, _ := ui.us.CreateUser(ctx, user)
 	ui.up.CreateUser(ctx, &outputUser, w)
+}
+
+func (ui *userInteractor) UpdateUser(ctx context.Context, user *input.UpdateUser, w http.ResponseWriter) {
+	// todo errチェック
+	outputUser, _ := ui.us.UpdateUser(ctx, user)
+	ui.up.UpdateUser(ctx, &outputUser, w)
 }

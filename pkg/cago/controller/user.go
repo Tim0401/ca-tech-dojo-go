@@ -58,7 +58,7 @@ func (uc *userController) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (uc *userController) GetUser(w http.ResponseWriter, r *http.Request) {
-	//parse json
+
 	var user input.GetUser
 	token := r.Header.Get("x-token")
 
@@ -72,4 +72,42 @@ func (uc *userController) GetUser(w http.ResponseWriter, r *http.Request) {
 }
 func (uc *userController) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
+	var user input.UpdateUser
+
+	if r.Header.Get("Content-Type") != "application/json" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	//To allocate slice for request body
+	length, err := strconv.Atoi(r.Header.Get("Content-Length"))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	//Read body data to parse json
+	body := make([]byte, length)
+	length, err = r.Body.Read(body)
+	if err != nil && err != io.EOF {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	//parse json
+	err = json.Unmarshal(body[:length], &user)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	token := r.Header.Get("x-token")
+	if token == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	user.Xtoken = token
+
+	ctx := r.Context()
+	uc.ui.UpdateUser(ctx, &user, w)
 }
