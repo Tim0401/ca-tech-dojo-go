@@ -58,6 +58,17 @@ func (uc *userController) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (uc *userController) GetUser(w http.ResponseWriter, r *http.Request) {
+	//parse json
+	var user input.GetUser
+	token := r.Header.Get("x-token")
+
+	if token == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	user.Xtoken = token
+	ctx := r.Context()
+	uc.ui.GetUser(ctx, &user, w)
 }
 func (uc *userController) UpdateUser(w http.ResponseWriter, r *http.Request) {
 

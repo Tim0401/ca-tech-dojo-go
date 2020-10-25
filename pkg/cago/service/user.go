@@ -13,29 +13,68 @@ import (
 
 // UserService ユーザーサービス
 type UserService interface {
-	CreateUser(ctx context.Context, user *input.CreateUser) output.CreateUser
+	CreateUser(ctx context.Context, user *input.CreateUser) (output.CreateUser, error)
+	GetUser(ctx context.Context, user *input.GetUser) (output.GetUser, error)
 }
 
 type userService struct {
-	ur repository.UserRepository
+	r repository.Repository
 }
 
 // NewUserService ユーザーサービス作成
-func NewUserService(ur repository.UserRepository) UserService {
-	return &userService{ur}
+func NewUserService(r repository.Repository) UserService {
+	return &userService{r}
 }
 
-func (us *userService) CreateUser(ctx context.Context, user *input.CreateUser) output.CreateUser {
+func (us *userService) GetUser(ctx context.Context, user *input.GetUser) (output.GetUser, error) {
+	var outputUser output.GetUser
+
+	con, err := us.r.NewConnection()
+	if err != nil {
+		return outputUser, err
+	}
+	defer con.Close()
+
+	userModel, err := con.User().FindByToken(user.Xtoken)
+
+	outputUser.Name = userModel.Name
+	return outputUser, err
+}
+
+func (us *userService) CreateUser(ctx context.Context, user *input.CreateUser) (output.CreateUser, error) {
 	var modelUser model.User
 	uuidV4 := uuid.New()
 	modelUser.Name = user.Name
 	modelUser.Token = uuidV4.String()
 	modelUser.CreatedAt = time.Now()
 
-	us.ur.CreateUser(ctx, &modelUser)
-	// エラーをどう処理するか
+	// 保存
+	// us.ur.RunTransaction(func(tx *sql.Tx) error {
+	// 	err := us.ur.CreateUser(ctx, &modelUser, tx)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+
+	// 	return nil
+	// })
 
 	var outputUser output.CreateUser
+
+	con, err := us.r.NewConnection()
+	if err != nil {
+		return outputUser, err
+	}
+	defer con.Close()
+
+	err = con.RunTransaction(func(tx repository.Transaction) error {
+		err := tx.User().Create(&modelUser)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
 	outputUser.Xtoken = modelUser.Token
-	return outputUser
+	return outputUser, err
 }

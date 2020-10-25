@@ -34,6 +34,9 @@ https://qiita.com/taizo/items/bf1ec35a65ad5f608d45
 ### DB
 
 https://qiita.com/tenntenn/items/dddb13c15643454a7c3b  
+https://precure-3dprinter.hatenablog.jp/entry/2018/11/22/Golang%E3%81%A7%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B6%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%82%92%E4%BD%BF%E3%81%86%E8%A9%B1  
+https://qiita.com/mayah/items/a235a52a336095545e9d  
+https://blog.withnic.net/2018/08/golang%E3%81%A7transaction%E5%87%A6%E7%90%86%E3%82%92%E8%80%83%E3%81%88%E3%82%8B/
 
 ### 外部設定ファイル
 

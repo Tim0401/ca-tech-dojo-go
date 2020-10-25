@@ -11,6 +11,7 @@ import (
 // UserInteractor ユーザーサービス
 type UserInteractor interface {
 	CreateUser(ctx context.Context, user *input.CreateUser, w http.ResponseWriter)
+	GetUser(ctx context.Context, user *input.GetUser, w http.ResponseWriter)
 }
 
 type userInteractor struct {
@@ -23,7 +24,13 @@ func NewUserInteractor(us service.UserService, up presenter.UserPresenter) UserI
 	return &userInteractor{us, up}
 }
 
+func (ui *userInteractor) GetUser(ctx context.Context, user *input.GetUser, w http.ResponseWriter) {
+	outputUser, _ := ui.us.GetUser(ctx, user)
+	ui.up.GetUser(ctx, &outputUser, w)
+}
+
 func (ui *userInteractor) CreateUser(ctx context.Context, user *input.CreateUser, w http.ResponseWriter) {
-	outputUser := ui.us.CreateUser(ctx, user)
+	// todo errチェック
+	outputUser, _ := ui.us.CreateUser(ctx, user)
 	ui.up.CreateUser(ctx, &outputUser, w)
 }
