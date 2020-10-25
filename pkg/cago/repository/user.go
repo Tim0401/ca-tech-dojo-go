@@ -8,7 +8,7 @@ import (
 
 // UserRepository ユーザーリポジトリ
 type UserRepository interface {
-	CreateUser(ctx context.Context, user *model.User)
+	CreateUser(ctx context.Context, user *model.User) error
 }
 
 type dbUserRepository struct {
@@ -20,6 +20,8 @@ func NewDbUserRepository(db *sql.DB) UserRepository {
 	return &dbUserRepository{*db}
 }
 
-func (ur *dbUserRepository) CreateUser(ctx context.Context, user *model.User) {
-	ur.db.Query("INSERT INTO テーブル名（列名1,列名2,……）")
+func (ur *dbUserRepository) CreateUser(ctx context.Context, user *model.User) error {
+	sql := "INSERT INTO user (name, token, created_at) VALUES (?, ?, ?)"
+	_, err := ur.db.Exec(sql, user.Name, user.Token, user.CreatedAt)
+	return err
 }

@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"ca-tech-dojo-go/pkg/cago/service"
+	"ca-tech-dojo-go/pkg/cago/interactor"
+	"ca-tech-dojo-go/pkg/cago/service/input"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -11,20 +11,20 @@ import (
 
 type UserController interface {
 	CreateUser(w http.ResponseWriter, r *http.Request)
+	GetUser(w http.ResponseWriter, r *http.Request)
+	UpdateUser(w http.ResponseWriter, r *http.Request)
 }
 
 type userController struct {
-	us service.UserService
+	ui interactor.UserInteractor
 }
 
 // NewUserController ユーザーコントローラー作成
-func NewUserController(us service.UserService) UserController {
-	return &userController{us}
+func NewUserController(ui interactor.UserInteractor) UserController {
+	return &userController{ui}
 }
 
 func (uc *userController) CreateUser(w http.ResponseWriter, r *http.Request) {
-	// var user model.User
-	// ctx := r.Context()
 
 	if r.Header.Get("Content-Type") != "application/json" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -47,15 +47,18 @@ func (uc *userController) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//parse json
-	var jsonBody map[string]interface{}
-	err = json.Unmarshal(body[:length], &jsonBody)
+	var user input.CreateUser
+	err = json.Unmarshal(body[:length], &user)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	fmt.Printf("%v\n", jsonBody)
+	ctx := r.Context()
+	uc.ui.CreateUser(ctx, &user, w)
+}
 
-	w.WriteHeader(http.StatusOK)
+func (uc *userController) GetUser(w http.ResponseWriter, r *http.Request) {
+}
+func (uc *userController) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
-	// uc.us.CreateUser(ctx, &user)
 }

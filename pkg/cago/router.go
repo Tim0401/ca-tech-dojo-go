@@ -2,6 +2,8 @@ package cago
 
 import (
 	"ca-tech-dojo-go/pkg/cago/controller"
+	"ca-tech-dojo-go/pkg/cago/interactor"
+	"ca-tech-dojo-go/pkg/cago/presenter"
 	"ca-tech-dojo-go/pkg/cago/repository"
 	"ca-tech-dojo-go/pkg/cago/service"
 	"ca-tech-dojo-go/pkg/util"
@@ -31,7 +33,9 @@ func Router(w http.ResponseWriter, r *http.Request) {
 
 	ur := repository.NewDbUserRepository(db)
 	us := service.NewUserService(ur)
-	uc := controller.NewUserController(us)
+	up := presenter.NewUserPresenter()
+	ui := interactor.NewUserInteractor(us, up)
+	uc := controller.NewUserController(ui)
 
 	switch r.URL.Path {
 	case "/user/create":
