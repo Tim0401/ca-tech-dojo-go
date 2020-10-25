@@ -4,6 +4,7 @@ import (
 	"ca-tech-dojo-go/pkg/cago/model"
 	"database/sql"
 	"log"
+	"time"
 )
 
 type dbUserRepository struct {
@@ -54,9 +55,9 @@ func (r *dbUserRepository) Create(user *model.User) error {
 	return err
 }
 
-func (r *dbUserRepository) UpdateNameByToken(name string, token string) error {
+func (r *dbUserRepository) UpdateNameByToken(name string, UpdatedAt time.Time, token string) error {
 	tx := r.tx
-	cmd := "UPDATE user SET name = ? WHERE token = ?"
-	_, err := tx.Exec(cmd, name, token)
+	cmd := "UPDATE user SET name = ?, updated_at = ? WHERE token = ?"
+	_, err := tx.Exec(cmd, name, UpdatedAt, token)
 	return err
 }

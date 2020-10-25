@@ -91,7 +91,7 @@ func (us *userService) UpdateUser(ctx context.Context, user *input.UpdateUser) (
 	defer con.Close()
 
 	err = con.RunTransaction(func(tx repository.Transaction) error {
-		err := tx.User().UpdateNameByToken(user.Name, user.Xtoken)
+		err := tx.User().UpdateNameByToken(user.Name, time.Now(), user.Xtoken)
 		if err != nil {
 			return err
 		}

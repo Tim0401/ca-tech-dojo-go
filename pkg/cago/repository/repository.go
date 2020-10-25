@@ -2,6 +2,7 @@ package repository
 
 import (
 	"ca-tech-dojo-go/pkg/cago/model"
+	"time"
 )
 
 type Repository interface {
@@ -29,5 +30,5 @@ type UserCommand interface {
 	UserQuery
 
 	Create(user *model.User) error
-	UpdateNameByToken(name string, token string) error
+	UpdateNameByToken(name string, UpdatedAt time.Time, token string) error
 }
