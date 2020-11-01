@@ -1,7 +1,8 @@
 ---- drop ----
 DROP TABLE IF EXISTS `chara_user`;
+DROP TABLE IF EXISTS `gacha`;
 DROP TABLE IF EXISTS `user`;
-DROP TABLE IF EXISTS `character`;
+DROP TABLE IF EXISTS `chara`;
 
 ---- create ----
 create table IF not exists `user`
@@ -44,7 +45,7 @@ create table IF not exists `gacha`
 (
  `id`               INT(20) AUTO_INCREMENT,
  `chara_id`         INT(20) NOT NULL,
- `rate`             DOUBLE(3,3) NOT NULL comment '排出確率(%)',
+ `rate`             DOUBLE(6,3) NOT NULL comment '排出確率(%)',
  `created_at`       Datetime NOT NULL,
  `updated_at`       Datetime DEFAULT NULL,
     PRIMARY KEY (`id`)

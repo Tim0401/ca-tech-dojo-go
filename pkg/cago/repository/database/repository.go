@@ -67,3 +67,7 @@ func (con *dbConnection) User() repository.UserQuery {
 func (tx *dbTransaction) User() repository.UserCommand {
 	return &dbUserRepository{tx: tx.db}
 }
+
+func (con *dbConnection) Gacha() repository.GachaQuery {
+	return &dbGachaRepository{db: con.db}
+}

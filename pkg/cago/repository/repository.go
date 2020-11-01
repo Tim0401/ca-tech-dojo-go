@@ -15,6 +15,7 @@ type Connection interface {
 	RunTransaction(func(tx Transaction) error) error
 
 	User() UserQuery
+	Gacha() GachaQuery
 }
 
 type Transaction interface {
@@ -31,4 +32,8 @@ type UserCommand interface {
 
 	Create(user *model.User) error
 	UpdateName(name string, UpdatedAt time.Time, id int32) error
+}
+
+type GachaQuery interface {
+	FindAll() ([]model.Gacha, error)
 }

@@ -2,6 +2,8 @@ package controller
 
 import (
 	cInput "ca-tech-dojo-go/pkg/cago/controller/input"
+	"ca-tech-dojo-go/pkg/cago/interactor"
+	iInput "ca-tech-dojo-go/pkg/cago/interactor/input"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -12,11 +14,12 @@ type GachaController interface {
 }
 
 type gachaController struct {
+	gi interactor.GachaInteractor
 }
 
 // NewGachaController Gachaコントローラー作成
-func NewGachaController() GachaController {
-	return &gachaController{}
+func NewGachaController(gi interactor.GachaInteractor) GachaController {
+	return &gachaController{gi}
 }
 
 func (gc *gachaController) DrawGacha(w http.ResponseWriter, r *http.Request) {
@@ -26,13 +29,18 @@ func (gc *gachaController) DrawGacha(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var controllerDrawGacha cInput.DrawGacha
-	if err := json.NewDecoder(r.Body).Decode(&controllerDrawGacha); err != nil {
+	var controllerInput cInput.DrawGacha
+	if err := json.NewDecoder(r.Body).Decode(&controllerInput); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	fmt.Printf("stub drawGacha")
+
+	ctx := r.Context()
+	var interactorInput iInput.DrawGacha
+	interactorInput.Times = controllerInput.Times
+	gc.gi.DrawGacha(ctx, &interactorInput)
 
 	// ctx := r.Context()
 	// modelUser, ok := ctx.Value(model.UserKey).(model.User)

@@ -34,7 +34,9 @@ func Serve(config *util.Config) {
 	ur := router.NewUserRouter(uc)
 
 	// gacha
-	gc := controller.NewGachaController()
+	gs := service.NewGachaService(repository)
+	gi := interactor.NewGachaInteractor(gs)
+	gc := controller.NewGachaController(gi)
 	gr := router.NewGachaRouter(gc)
 
 	// middleware
