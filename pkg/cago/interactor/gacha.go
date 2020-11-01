@@ -26,12 +26,12 @@ func NewGachaInteractor(gs service.GachaService, cs service.CharaService) GachaI
 func (gi *gachaInteractor) DrawGacha(ctx context.Context, gacha *input.DrawGacha) (output.DrawGacha, error) {
 
 	var getRateInput sInput.GetGachaRate
-	var output output.DrawGacha
+	var out output.DrawGacha
 
 	// ガチャレート取得
 	getRateOutput, err := gi.gs.GetGachaRate(ctx, &getRateInput)
 	if err != nil {
-		return output, err
+		return out, err
 	}
 
 	// ガチャ
@@ -41,7 +41,7 @@ func (gi *gachaInteractor) DrawGacha(ctx context.Context, gacha *input.DrawGacha
 	for i := 0; i < int(gacha.Times); i++ {
 		drawGachaOutput, err := gi.gs.DrawGacha(ctx, &drawGachaInput)
 		if err != nil {
-			return output, err
+			return out, err
 		}
 		charaIDs = append(charaIDs, drawGachaOutput.CharaID)
 	}
@@ -52,13 +52,23 @@ func (gi *gachaInteractor) DrawGacha(ctx context.Context, gacha *input.DrawGacha
 	addUserCharaInput.UserID = gacha.UserID
 	_, err = gi.cs.AddUserChara(ctx, &addUserCharaInput)
 	if err != nil {
-		return output, err
+		return out, err
 	}
 
 	// キャラクター名取得
 	var getCharasInput sInput.GetCharas
 	getCharasInput.IDs = charaIDs
-	gi.cs.GetCharas(ctx, &getCharasInput)
+	getCharaOutput, err := gi.cs.GetCharas(ctx, &getCharasInput)
+	if err != nil {
+		return out, err
+	}
 
-	return output, nil
+	for _, charaID := range charaIDs {
+		var chara output.Chara
+		chara.ID = charaID
+		chara.Name = getCharaOutput.CharaName[chara.ID]
+		out.Charas = append(out.Charas, chara)
+	}
+
+	return out, nil
 }

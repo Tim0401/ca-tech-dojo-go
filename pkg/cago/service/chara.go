@@ -3,7 +3,6 @@ package service
 import (
 	"ca-tech-dojo-go/pkg/cago/repository"
 	"ca-tech-dojo-go/pkg/cago/service/input"
-	"ca-tech-dojo-go/pkg/cago/service/io"
 	"ca-tech-dojo-go/pkg/cago/service/output"
 	"context"
 	"time"
@@ -39,11 +38,9 @@ func (cs *charaService) GetCharas(ctx context.Context, chara *input.GetCharas) (
 	}
 
 	// 格納
+	outputGetCharas.CharaName = make(map[int32]string)
 	for _, charaModel := range charaModels {
-		var chara io.Chara
-		chara.ID = charaModel.ID
-		chara.Name = charaModel.Name
-		outputGetCharas.Charas = append(outputGetCharas.Charas, chara)
+		outputGetCharas.CharaName[charaModel.ID] = charaModel.Name
 	}
 
 	return outputGetCharas, err

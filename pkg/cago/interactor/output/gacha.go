@@ -1,10 +1,10 @@
 package output
 
 type DrawGacha struct {
-	Charas []chara
+	Charas []Chara
 }
 
-type chara struct {
+type Chara struct {
 	ID   int32
 	Name string
 }
