@@ -11,6 +11,8 @@ import (
 	"ca-tech-dojo-go/pkg/util"
 	"database/sql"
 	"net/http"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // Serve エントリーポイント

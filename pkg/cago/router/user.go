@@ -4,8 +4,6 @@ import (
 	"ca-tech-dojo-go/pkg/cago/controller"
 	"fmt"
 	"net/http"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 type UserRouter interface {
