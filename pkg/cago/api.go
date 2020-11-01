@@ -34,6 +34,7 @@ func Serve(config *util.Config) {
 
 	mux := http.NewServeMux()
 
+	mux.HandleFunc("/user/create", ur.UserRouter)
 	mux.HandleFunc("/user/", middlewares.Then(ur.UserRouter))
 	http.ListenAndServe(":8080", mux)
 }
