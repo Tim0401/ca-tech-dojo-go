@@ -1,14 +1,11 @@
 package output
 
+import "ca-tech-dojo-go/pkg/cago/service/io"
+
 type DrawGacha struct {
-	CharaRates []CharaRate
-	Times      int32
-}
-type GetGachaRate struct {
-	CharaRates []CharaRate
+	CharaID int32
 }
 
-type CharaRate struct {
-	CharaID int32
-	Rate    float64
+type GetGachaRate struct {
+	CharaRates []io.CharaRate
 }

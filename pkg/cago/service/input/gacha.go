@@ -1,7 +1,9 @@
 package input
 
+import "ca-tech-dojo-go/pkg/cago/service/io"
+
 type DrawGacha struct {
-	CharaIDs []int32
+	CharaRates []io.CharaRate
 }
 
 type GetGachaRate struct{}

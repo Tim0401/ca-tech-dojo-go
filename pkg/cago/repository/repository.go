@@ -16,10 +16,12 @@ type Connection interface {
 
 	User() UserQuery
 	Gacha() GachaQuery
+	Chara() CharaQuery
 }
 
 type Transaction interface {
 	User() UserCommand
+	Chara() CharaCommand
 }
 
 type UserQuery interface {
@@ -36,4 +38,12 @@ type UserCommand interface {
 
 type GachaQuery interface {
 	FindAll() ([]model.Gacha, error)
+}
+
+type CharaQuery interface {
+	FindByIDs(IDs []int32) ([]model.Chara, error)
+}
+
+type CharaCommand interface {
+	AddUserChara(charaIDs []int32, CreatedAt time.Time, userID int32) error
 }

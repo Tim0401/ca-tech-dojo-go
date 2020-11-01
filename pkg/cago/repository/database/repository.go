@@ -71,3 +71,11 @@ func (tx *dbTransaction) User() repository.UserCommand {
 func (con *dbConnection) Gacha() repository.GachaQuery {
 	return &dbGachaRepository{db: con.db}
 }
+
+func (con *dbConnection) Chara() repository.CharaQuery {
+	return &dbCharaRepository{db: con.db}
+}
+
+func (tx *dbTransaction) Chara() repository.CharaCommand {
+	return &dbCharaRepository{tx: tx.db}
+}

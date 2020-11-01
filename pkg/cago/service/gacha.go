@@ -3,8 +3,11 @@ package service
 import (
 	"ca-tech-dojo-go/pkg/cago/repository"
 	"ca-tech-dojo-go/pkg/cago/service/input"
+	"ca-tech-dojo-go/pkg/cago/service/io"
 	"ca-tech-dojo-go/pkg/cago/service/output"
 	"context"
+	"errors"
+	"math/rand"
 )
 
 // UserService ユーザーサービス
@@ -38,7 +41,7 @@ func (gs *gachaService) GetGachaRate(ctx context.Context, user *input.GetGachaRa
 
 	// 格納
 	for _, gachaModel := range gachaModels {
-		var charaRate output.CharaRate
+		var charaRate io.CharaRate
 		charaRate.CharaID = gachaModel.CharaID
 		charaRate.Rate = gachaModel.Rate
 		outputGachaRate.CharaRates = append(outputGachaRate.CharaRates, charaRate)
@@ -47,8 +50,18 @@ func (gs *gachaService) GetGachaRate(ctx context.Context, user *input.GetGachaRa
 	return outputGachaRate, err
 }
 
-func (gs *gachaService) DrawGacha(ctx context.Context, user *input.DrawGacha) (output.DrawGacha, error) {
+func (gs *gachaService) DrawGacha(ctx context.Context, gacha *input.DrawGacha) (output.DrawGacha, error) {
 	var outputDrawGacha output.DrawGacha
+	resultRate := rand.Float64()
+	var sum = 0.0
 
-	return outputDrawGacha, nil
+	for _, chara := range gacha.CharaRates {
+		sum += chara.Rate / 100
+		if sum > resultRate {
+			outputDrawGacha.CharaID = chara.CharaID
+			return outputDrawGacha, nil
+		}
+	}
+
+	return outputDrawGacha, errors.New("ガチャの結果が存在しません")
 }

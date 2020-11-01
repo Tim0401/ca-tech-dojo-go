@@ -35,7 +35,8 @@ func Serve(config *util.Config) {
 
 	// gacha
 	gs := service.NewGachaService(repository)
-	gi := interactor.NewGachaInteractor(gs)
+	cs := service.NewCharaService(repository)
+	gi := interactor.NewGachaInteractor(gs, cs)
 	gc := controller.NewGachaController(gi)
 	gr := router.NewGachaRouter(gc)
 

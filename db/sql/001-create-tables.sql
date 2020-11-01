@@ -39,8 +39,6 @@ create table IF not exists `chara_user`
 ALTER TABLE chara_user add FOREIGN KEY (user_id) references user(id);
 ALTER TABLE chara_user add FOREIGN KEY (chara_id) references chara(id);
 
-create UNIQUE INDEX chara_user_index on chara_user(user_id, chara_id);
-
 create table IF not exists `gacha`
 (
  `id`               INT(20) AUTO_INCREMENT,
