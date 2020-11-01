@@ -20,7 +20,7 @@ func (r *dbUserRepository) Find(id int) (*model.User, error) {
 	if r.db != nil {
 		row = r.db.QueryRow(cmd, id)
 	} else {
-		row = r.db.QueryRow(cmd, id)
+		row = r.tx.QueryRow(cmd, id)
 	}
 	if err := row.Scan(&user.ID, &user.Name, &user.Token, &user.CreatedAt, &user.UpdatedAt); err != nil {
 		log.Println(err)
@@ -38,7 +38,7 @@ func (r *dbUserRepository) FindByToken(token string) (*model.User, error) {
 	if r.db != nil {
 		row = r.db.QueryRow(cmd, token)
 	} else {
-		row = r.db.QueryRow(cmd, token)
+		row = r.tx.QueryRow(cmd, token)
 	}
 	if err := row.Scan(&user.ID, &user.Name, &user.Token, &user.CreatedAt, &user.UpdatedAt); err != nil {
 		log.Println(err)

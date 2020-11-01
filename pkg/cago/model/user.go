@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 // User ユーザーモデル
 type User struct {
@@ -8,5 +11,5 @@ type User struct {
 	Name      string
 	Token     string
 	CreatedAt time.Time
-	UpdatedAt time.Time
+	UpdatedAt sql.NullTime
 }

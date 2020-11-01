@@ -37,6 +37,9 @@ func (us *userService) GetUser(ctx context.Context, user *input.GetUser) (output
 	defer con.Close()
 
 	userModel, err := con.User().FindByToken(user.Xtoken)
+	if err != nil {
+		return outputUser, err
+	}
 
 	outputUser.Name = userModel.Name
 	return outputUser, err
@@ -48,16 +51,6 @@ func (us *userService) CreateUser(ctx context.Context, user *input.CreateUser) (
 	modelUser.Name = user.Name
 	modelUser.Token = uuidV4.String()
 	modelUser.CreatedAt = time.Now()
-
-	// 保存
-	// us.ur.RunTransaction(func(tx *sql.Tx) error {
-	// 	err := us.ur.CreateUser(ctx, &modelUser, tx)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-
-	// 	return nil
-	// })
 
 	var outputUser output.CreateUser
 

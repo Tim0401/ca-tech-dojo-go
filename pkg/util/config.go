@@ -12,11 +12,12 @@ type db struct {
 	Dsn      string `json:"dsn" yaml:"dsn"`
 }
 
-type config struct {
+// Config アプリケーション設定
+type Config struct {
 	Db db `json:"db" yaml:"db"`
 }
 
-func LoadConfigForYaml() (*config, error) {
+func LoadConfigForYaml() (*Config, error) {
 	f, err := os.Open("../../config.yaml")
 	if err != nil {
 		log.Fatal("loadConfigForYaml os.Open err:", err)
@@ -24,7 +25,7 @@ func LoadConfigForYaml() (*config, error) {
 	}
 	defer f.Close()
 
-	var cfg config
+	var cfg Config
 	err = yaml.NewDecoder(f).Decode(&cfg)
 	return &cfg, err
 }
