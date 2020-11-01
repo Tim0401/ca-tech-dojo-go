@@ -1,10 +1,11 @@
-package output
+package input
 
 type CreateUser struct {
-	Xtoken string
+	Xtoken string `json:"token"`
 }
+
 type GetUser struct {
-	Name string
+	Name string `json:"name"`
 }
 
 type UpdateUser struct{}

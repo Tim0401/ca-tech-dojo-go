@@ -22,13 +22,13 @@ type Transaction interface {
 }
 
 type UserQuery interface {
-	Find(id int) (*model.User, error)
-	FindByToken(token string) (*model.User, error)
+	Find(id int32) (model.User, error)
+	FindByToken(token string) (model.User, error)
 }
 
 type UserCommand interface {
 	UserQuery
 
 	Create(user *model.User) error
-	UpdateNameByToken(name string, UpdatedAt time.Time, token string) error
+	UpdateName(name string, UpdatedAt time.Time, id int32) error
 }

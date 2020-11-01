@@ -12,7 +12,7 @@ type dbUserRepository struct {
 	tx *sql.Tx
 }
 
-func (r *dbUserRepository) Find(id int) (*model.User, error) {
+func (r *dbUserRepository) Find(id int32) (model.User, error) {
 	var user model.User
 	var row *sql.Row
 	cmd := "SELECT id, name, token, created_at, updated_at FROM user WHERE id = ?"
@@ -24,13 +24,13 @@ func (r *dbUserRepository) Find(id int) (*model.User, error) {
 	}
 	if err := row.Scan(&user.ID, &user.Name, &user.Token, &user.CreatedAt, &user.UpdatedAt); err != nil {
 		log.Println(err)
-		return nil, err
+		return user, err
 	}
 
-	return &user, nil
+	return user, nil
 }
 
-func (r *dbUserRepository) FindByToken(token string) (*model.User, error) {
+func (r *dbUserRepository) FindByToken(token string) (model.User, error) {
 	var user model.User
 	var row *sql.Row
 	cmd := "SELECT id, name, token, created_at, updated_at FROM user WHERE token = ?"
@@ -42,10 +42,10 @@ func (r *dbUserRepository) FindByToken(token string) (*model.User, error) {
 	}
 	if err := row.Scan(&user.ID, &user.Name, &user.Token, &user.CreatedAt, &user.UpdatedAt); err != nil {
 		log.Println(err)
-		return nil, err
+		return user, err
 	}
 
-	return &user, nil
+	return user, nil
 }
 
 func (r *dbUserRepository) Create(user *model.User) error {
@@ -55,9 +55,9 @@ func (r *dbUserRepository) Create(user *model.User) error {
 	return err
 }
 
-func (r *dbUserRepository) UpdateNameByToken(name string, UpdatedAt time.Time, token string) error {
+func (r *dbUserRepository) UpdateName(name string, UpdatedAt time.Time, id int32) error {
 	tx := r.tx
-	cmd := "UPDATE user SET name = ?, updated_at = ? WHERE token = ?"
-	_, err := tx.Exec(cmd, name, UpdatedAt, token)
+	cmd := "UPDATE user SET name = ?, updated_at = ? WHERE id = ?"
+	_, err := tx.Exec(cmd, name, UpdatedAt, id)
 	return err
 }

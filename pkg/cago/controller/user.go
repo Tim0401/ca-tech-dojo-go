@@ -1,13 +1,15 @@
 package controller
 
 import (
+	cInput "ca-tech-dojo-go/pkg/cago/controller/input"
 	"ca-tech-dojo-go/pkg/cago/interactor"
+	iInput "ca-tech-dojo-go/pkg/cago/interactor/input"
+	"ca-tech-dojo-go/pkg/cago/model"
 	"ca-tech-dojo-go/pkg/cago/presenter"
-	"ca-tech-dojo-go/pkg/cago/service/input"
+	pInput "ca-tech-dojo-go/pkg/cago/presenter/input"
 	"encoding/json"
-	"io"
+	"fmt"
 	"net/http"
-	"strconv"
 )
 
 type UserController interface {
@@ -33,89 +35,67 @@ func (uc *userController) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//To allocate slice for request body
-	length, err := strconv.Atoi(r.Header.Get("Content-Length"))
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	//Read body data to parse json
-	body := make([]byte, length)
-	length, err = r.Body.Read(body)
-	if err != nil && err != io.EOF {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
 	//parse json
-	var user input.CreateUser
-	err = json.Unmarshal(body[:length], &user)
-	if err != nil {
+	var controllerUser cInput.CreateUser
+	var presenterUser pInput.CreateUser
+	var interactorUser iInput.CreateUser
+	if err := json.NewDecoder(r.Body).Decode(&controllerUser); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
 	ctx := r.Context()
+	interactorUser.Name = controllerUser.Name
 	// todo エラー
-	output, _ := uc.ui.CreateUser(ctx, &user)
-	uc.up.CreateUser(ctx, &output, w)
+	output, _ := uc.ui.CreateUser(ctx, &interactorUser)
+	presenterUser.Xtoken = output.Xtoken
+	uc.up.CreateUser(ctx, &presenterUser, w)
 }
 
 func (uc *userController) GetUser(w http.ResponseWriter, r *http.Request) {
 
-	var user input.GetUser
-	token := r.Header.Get("x-token")
-
-	if token == "" {
-		w.WriteHeader(http.StatusBadRequest)
+	var presenterUser pInput.GetUser
+	var interactorUser iInput.GetUser
+	ctx := r.Context()
+	modelUser, ok := ctx.Value(model.UserKey).(model.User)
+	if !ok {
+		fmt.Printf("ctxから取得した値をmodel.Userに変換できません。")
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	user.Xtoken = token
-	ctx := r.Context()
-	// todo エラー
-	output, _ := uc.ui.GetUser(ctx, &user)
-	uc.up.GetUser(ctx, &output, w)
+	interactorUser.ID = modelUser.ID
+	output, _ := uc.ui.GetUser(ctx, &interactorUser)
+	presenterUser.Name = output.Name
+	uc.up.GetUser(ctx, &presenterUser, w)
 }
 func (uc *userController) UpdateUser(w http.ResponseWriter, r *http.Request) {
-
-	var user input.UpdateUser
 
 	if r.Header.Get("Content-Type") != "application/json" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	//To allocate slice for request body
-	length, err := strconv.Atoi(r.Header.Get("Content-Length"))
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	//Read body data to parse json
-	body := make([]byte, length)
-	length, err = r.Body.Read(body)
-	if err != nil && err != io.EOF {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
 	//parse json
-	err = json.Unmarshal(body[:length], &user)
-	if err != nil {
+	var controllerUser cInput.UpdateUser
+	var presenterUser pInput.UpdateUser
+	var interactorUser iInput.UpdateUser
+	if err := json.NewDecoder(r.Body).Decode(&controllerUser); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
-	token := r.Header.Get("x-token")
-	if token == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	user.Xtoken = token
 
 	ctx := r.Context()
+	modelUser, ok := ctx.Value(model.UserKey).(model.User)
+	if !ok {
+		fmt.Printf("ctxから取得した値をmodel.Userに変換できません。")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	interactorUser.ID = modelUser.ID
+	interactorUser.Name = controllerUser.Name
 	// todo エラー
-	output, _ := uc.ui.UpdateUser(ctx, &user)
-	uc.up.UpdateUser(ctx, &output, w)
+	if _, err := uc.ui.UpdateUser(ctx, &interactorUser); err != nil {
+
+	}
+	uc.up.UpdateUser(ctx, &presenterUser, w)
 }

@@ -7,7 +7,7 @@ import (
 
 // User ユーザーモデル
 type User struct {
-	ID        int16
+	ID        int32
 	Name      string
 	Token     string
 	CreatedAt time.Time

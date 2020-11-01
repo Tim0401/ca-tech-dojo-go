@@ -36,7 +36,7 @@ func (us *userService) GetUser(ctx context.Context, user *input.GetUser) (output
 	}
 	defer con.Close()
 
-	userModel, err := con.User().FindByToken(user.Xtoken)
+	userModel, err := con.User().Find(user.ID)
 	if err != nil {
 		return outputUser, err
 	}
@@ -84,7 +84,7 @@ func (us *userService) UpdateUser(ctx context.Context, user *input.UpdateUser) (
 	defer con.Close()
 
 	err = con.RunTransaction(func(tx repository.Transaction) error {
-		err := tx.User().UpdateNameByToken(user.Name, time.Now(), user.Xtoken)
+		err := tx.User().UpdateName(user.Name, time.Now(), user.ID)
 		if err != nil {
 			return err
 		}

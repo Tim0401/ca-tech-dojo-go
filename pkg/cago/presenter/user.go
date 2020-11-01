@@ -1,7 +1,7 @@
 package presenter
 
 import (
-	"ca-tech-dojo-go/pkg/cago/service/output"
+	"ca-tech-dojo-go/pkg/cago/presenter/input"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -9,9 +9,9 @@ import (
 
 // UserPresenter ユーザープレゼンター
 type UserPresenter interface {
-	CreateUser(ctx context.Context, user *output.CreateUser, w http.ResponseWriter)
-	GetUser(ctx context.Context, user *output.GetUser, w http.ResponseWriter)
-	UpdateUser(ctx context.Context, user *output.UpdateUser, w http.ResponseWriter)
+	CreateUser(ctx context.Context, user *input.CreateUser, w http.ResponseWriter)
+	GetUser(ctx context.Context, user *input.GetUser, w http.ResponseWriter)
+	UpdateUser(ctx context.Context, user *input.UpdateUser, w http.ResponseWriter)
 }
 
 type userPresenter struct {
@@ -22,7 +22,7 @@ func NewUserPresenter() UserPresenter {
 	return &userPresenter{}
 }
 
-func (up *userPresenter) GetUser(ctx context.Context, user *output.GetUser, w http.ResponseWriter) {
+func (up *userPresenter) GetUser(ctx context.Context, user *input.GetUser, w http.ResponseWriter) {
 	res, err := json.Marshal(user)
 
 	if err != nil {
@@ -34,7 +34,7 @@ func (up *userPresenter) GetUser(ctx context.Context, user *output.GetUser, w ht
 	w.Write(res)
 }
 
-func (up *userPresenter) CreateUser(ctx context.Context, user *output.CreateUser, w http.ResponseWriter) {
+func (up *userPresenter) CreateUser(ctx context.Context, user *input.CreateUser, w http.ResponseWriter) {
 	// output
 	res, err := json.Marshal(user)
 
@@ -47,7 +47,7 @@ func (up *userPresenter) CreateUser(ctx context.Context, user *output.CreateUser
 	w.Write(res)
 }
 
-func (up *userPresenter) UpdateUser(ctx context.Context, user *output.UpdateUser, w http.ResponseWriter) {
+func (up *userPresenter) UpdateUser(ctx context.Context, user *input.UpdateUser, w http.ResponseWriter) {
 	// output
 	res, err := json.Marshal(user)
 
