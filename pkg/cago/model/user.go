@@ -13,3 +13,9 @@ type User struct {
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 }
+
+type key int
+
+const (
+	UserKey key = iota
+)

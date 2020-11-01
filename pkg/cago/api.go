@@ -3,6 +3,7 @@ package cago
 import (
 	"ca-tech-dojo-go/pkg/cago/controller"
 	"ca-tech-dojo-go/pkg/cago/interactor"
+	"ca-tech-dojo-go/pkg/cago/middleware"
 	"ca-tech-dojo-go/pkg/cago/presenter"
 	"ca-tech-dojo-go/pkg/cago/repository/database"
 	"ca-tech-dojo-go/pkg/cago/router"
@@ -28,8 +29,11 @@ func Serve(config *util.Config) {
 	uc := controller.NewUserController(ui, up)
 	ur := router.NewUserRouter(uc)
 
+	authMiddleware := middleware.NewAuthMiddleware(repository)
+	middlewares := middleware.NewMws(authMiddleware)
+
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/user/", ur.UserRouter)
+	mux.HandleFunc("/user/", middlewares.Then(ur.UserRouter))
 	http.ListenAndServe(":8080", mux)
 }
