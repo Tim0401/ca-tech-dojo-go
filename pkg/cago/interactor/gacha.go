@@ -47,6 +47,13 @@ func (gi *gachaInteractor) DrawGacha(ctx context.Context, gacha *input.DrawGacha
 	}
 
 	// 登録
+	var addUserCharaInput sInput.AddUserChara
+	addUserCharaInput.CharaIDs = charaIDs
+	addUserCharaInput.UserID = gacha.UserID
+	_, err = gi.cs.AddUserChara(ctx, &addUserCharaInput)
+	if err != nil {
+		return output, err
+	}
 
 	// キャラクター名取得
 	var getCharasInput sInput.GetCharas

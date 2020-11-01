@@ -4,6 +4,7 @@ import (
 	cInput "ca-tech-dojo-go/pkg/cago/controller/input"
 	"ca-tech-dojo-go/pkg/cago/interactor"
 	iInput "ca-tech-dojo-go/pkg/cago/interactor/input"
+	"ca-tech-dojo-go/pkg/cago/model"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -38,17 +39,17 @@ func (gc *gachaController) DrawGacha(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("stub drawGacha")
 
 	ctx := r.Context()
+	modelUser, ok := ctx.Value(model.UserKey).(model.User)
+	if !ok {
+		fmt.Printf("ctxから取得した値をmodel.Userに変換できません。")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	var interactorInput iInput.DrawGacha
 	interactorInput.Times = controllerInput.Times
+	interactorInput.UserID = modelUser.ID
 	gc.gi.DrawGacha(ctx, &interactorInput)
-
-	// ctx := r.Context()
-	// modelUser, ok := ctx.Value(model.UserKey).(model.User)
-	// if !ok {
-	// 	fmt.Printf("ctxから取得した値をmodel.Userに変換できません。")
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	return
-	// }
 
 	// var interactorUser iInput.UpdateUser
 	// interactorUser.ID = modelUser.ID

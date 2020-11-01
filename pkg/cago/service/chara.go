@@ -6,12 +6,13 @@ import (
 	"ca-tech-dojo-go/pkg/cago/service/io"
 	"ca-tech-dojo-go/pkg/cago/service/output"
 	"context"
+	"time"
 )
 
 // CharaService CharaService
 type CharaService interface {
 	GetCharas(ctx context.Context, user *input.GetCharas) (output.GetCharas, error)
-	// AddUserChara(ctx context.Context, user *input.AddUserChara) (output.AddUserChara, error)
+	AddUserChara(ctx context.Context, user *input.AddUserChara) (output.AddUserChara, error)
 }
 
 type charaService struct {
@@ -23,7 +24,7 @@ func NewCharaService(r repository.Repository) CharaService {
 	return &charaService{r}
 }
 
-func (cs *charaService) GetCharas(ctx context.Context, user *input.GetCharas) (output.GetCharas, error) {
+func (cs *charaService) GetCharas(ctx context.Context, chara *input.GetCharas) (output.GetCharas, error) {
 	var outputGetCharas output.GetCharas
 
 	con, err := cs.r.NewConnection()
@@ -32,7 +33,7 @@ func (cs *charaService) GetCharas(ctx context.Context, user *input.GetCharas) (o
 	}
 	defer con.Close()
 
-	charaModels, err := con.Chara().FindByIDs(user.IDs)
+	charaModels, err := con.Chara().FindByIDs(chara.IDs)
 	if err != nil {
 		return outputGetCharas, err
 	}
@@ -46,4 +47,25 @@ func (cs *charaService) GetCharas(ctx context.Context, user *input.GetCharas) (o
 	}
 
 	return outputGetCharas, err
+}
+
+func (cs *charaService) AddUserChara(ctx context.Context, chara *input.AddUserChara) (output.AddUserChara, error) {
+	var outputAddUserChara output.AddUserChara
+
+	con, err := cs.r.NewConnection()
+	if err != nil {
+		return outputAddUserChara, err
+	}
+	defer con.Close()
+
+	err = con.RunTransaction(func(tx repository.Transaction) error {
+		err := tx.Chara().AddUserChara(chara.CharaIDs, time.Now(), chara.UserID)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return outputAddUserChara, err
 }
