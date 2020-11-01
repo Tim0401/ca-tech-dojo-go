@@ -9,3 +9,7 @@ type GetUser struct {
 }
 
 type UpdateUser struct{}
+
+type ShowError struct {
+	E error
+}

@@ -37,25 +37,29 @@ func (uc *userController) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	//parse json
 	var controllerUser cInput.CreateUser
-	var presenterUser pInput.CreateUser
-	var interactorUser iInput.CreateUser
 	if err := json.NewDecoder(r.Body).Decode(&controllerUser); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	ctx := r.Context()
+	var interactorUser iInput.CreateUser
 	interactorUser.Name = controllerUser.Name
-	// todo エラー
-	output, _ := uc.ui.CreateUser(ctx, &interactorUser)
+
+	output, err := uc.ui.CreateUser(ctx, &interactorUser)
+	if err != nil {
+		var presenterError pInput.ShowError
+		presenterError.E = err
+		uc.up.ShowError(ctx, &presenterError, w)
+	}
+
+	var presenterUser pInput.CreateUser
 	presenterUser.Xtoken = output.Xtoken
 	uc.up.CreateUser(ctx, &presenterUser, w)
 }
 
 func (uc *userController) GetUser(w http.ResponseWriter, r *http.Request) {
 
-	var presenterUser pInput.GetUser
-	var interactorUser iInput.GetUser
 	ctx := r.Context()
 	modelUser, ok := ctx.Value(model.UserKey).(model.User)
 	if !ok {
@@ -63,8 +67,17 @@ func (uc *userController) GetUser(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	var interactorUser iInput.GetUser
 	interactorUser.ID = modelUser.ID
-	output, _ := uc.ui.GetUser(ctx, &interactorUser)
+
+	output, err := uc.ui.GetUser(ctx, &interactorUser)
+	if err != nil {
+		var presenterError pInput.ShowError
+		presenterError.E = err
+		uc.up.ShowError(ctx, &presenterError, w)
+	}
+
+	var presenterUser pInput.GetUser
 	presenterUser.Name = output.Name
 	uc.up.GetUser(ctx, &presenterUser, w)
 }
@@ -75,10 +88,7 @@ func (uc *userController) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//parse json
 	var controllerUser cInput.UpdateUser
-	var presenterUser pInput.UpdateUser
-	var interactorUser iInput.UpdateUser
 	if err := json.NewDecoder(r.Body).Decode(&controllerUser); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -91,11 +101,17 @@ func (uc *userController) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	var interactorUser iInput.UpdateUser
 	interactorUser.ID = modelUser.ID
 	interactorUser.Name = controllerUser.Name
 	// todo エラー
 	if _, err := uc.ui.UpdateUser(ctx, &interactorUser); err != nil {
-
+		var presenterError pInput.ShowError
+		presenterError.E = err
+		uc.up.ShowError(ctx, &presenterError, w)
 	}
+
+	var presenterUser pInput.UpdateUser
 	uc.up.UpdateUser(ctx, &presenterUser, w)
 }

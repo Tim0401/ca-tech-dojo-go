@@ -12,6 +12,7 @@ type UserPresenter interface {
 	CreateUser(ctx context.Context, user *input.CreateUser, w http.ResponseWriter)
 	GetUser(ctx context.Context, user *input.GetUser, w http.ResponseWriter)
 	UpdateUser(ctx context.Context, user *input.UpdateUser, w http.ResponseWriter)
+	ShowError(ctx context.Context, user *input.ShowError, w http.ResponseWriter)
 }
 
 type userPresenter struct {
@@ -58,4 +59,14 @@ func (up *userPresenter) UpdateUser(ctx context.Context, user *input.UpdateUser,
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNoContent)
 	w.Write(res)
+}
+
+func (up *userPresenter) ShowError(ctx context.Context, err *input.ShowError, w http.ResponseWriter) {
+	// output
+	if err.E != nil {
+		http.Error(w, err.E.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }

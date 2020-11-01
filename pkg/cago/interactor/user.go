@@ -25,27 +25,30 @@ func NewUserInteractor(us service.UserService) UserInteractor {
 }
 
 func (ui *userInteractor) GetUser(ctx context.Context, user *input.GetUser) (output.GetUser, error) {
-	// todo errチェック
 	var serviceInput sInput.GetUser
 	var output output.GetUser
 	serviceInput.ID = user.ID
-	serviceOutput, _ := ui.us.GetUser(ctx, &serviceInput)
+	serviceOutput, err := ui.us.GetUser(ctx, &serviceInput)
+	if err != nil {
+		return output, err
+	}
 	output.Name = serviceOutput.Name
 	return output, nil
 }
 
 func (ui *userInteractor) CreateUser(ctx context.Context, user *input.CreateUser) (output.CreateUser, error) {
-	// todo errチェック
 	var serviceInput sInput.CreateUser
 	var output output.CreateUser
 	serviceInput.Name = user.Name
-	serviceOutput, _ := ui.us.CreateUser(ctx, &serviceInput)
+	serviceOutput, err := ui.us.CreateUser(ctx, &serviceInput)
+	if err != nil {
+		return output, err
+	}
 	output.Xtoken = serviceOutput.Xtoken
 	return output, nil
 }
 
 func (ui *userInteractor) UpdateUser(ctx context.Context, user *input.UpdateUser) (output.UpdateUser, error) {
-	// todo errチェック
 	var serviceInput sInput.UpdateUser
 	var output output.UpdateUser
 	serviceInput.ID = user.ID

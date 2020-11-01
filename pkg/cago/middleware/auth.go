@@ -4,7 +4,6 @@ import (
 	"ca-tech-dojo-go/pkg/cago/model"
 	"ca-tech-dojo-go/pkg/cago/repository"
 	"context"
-	"fmt"
 	"net/http"
 )
 
@@ -19,8 +18,6 @@ func NewAuthMiddleware(r repository.Repository) Middleware {
 
 func (am *authMiddleware) exec(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("[START] authMiddleware")
-
 		// ユーザー認証
 		con, err := am.r.NewConnection()
 		if err != nil {
@@ -40,7 +37,5 @@ func (am *authMiddleware) exec(next http.HandlerFunc) http.HandlerFunc {
 		sctx := context.WithValue(ctx, model.UserKey, modelUser)
 		r = r.WithContext(sctx)
 		next.ServeHTTP(w, r)
-
-		fmt.Println("[END] authMiddleware")
 	}
 }
