@@ -23,9 +23,9 @@ func Serve(config *util.Config) {
 
 	repository := database.NewRepository(db)
 	us := service.NewUserService(repository)
+	ui := interactor.NewUserInteractor(us)
 	up := presenter.NewUserPresenter()
-	ui := interactor.NewUserInteractor(us, up)
-	uc := controller.NewUserController(ui)
+	uc := controller.NewUserController(ui, up)
 	ur := router.NewUserRouter(uc)
 
 	mux := http.NewServeMux()

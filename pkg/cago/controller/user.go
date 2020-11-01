@@ -2,6 +2,7 @@ package controller
 
 import (
 	"ca-tech-dojo-go/pkg/cago/interactor"
+	"ca-tech-dojo-go/pkg/cago/presenter"
 	"ca-tech-dojo-go/pkg/cago/service/input"
 	"encoding/json"
 	"io"
@@ -17,11 +18,12 @@ type UserController interface {
 
 type userController struct {
 	ui interactor.UserInteractor
+	up presenter.UserPresenter
 }
 
 // NewUserController ユーザーコントローラー作成
-func NewUserController(ui interactor.UserInteractor) UserController {
-	return &userController{ui}
+func NewUserController(ui interactor.UserInteractor, up presenter.UserPresenter) UserController {
+	return &userController{ui, up}
 }
 
 func (uc *userController) CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +56,9 @@ func (uc *userController) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	uc.ui.CreateUser(ctx, &user, w)
+	// todo エラー
+	output, _ := uc.ui.CreateUser(ctx, &user)
+	uc.up.CreateUser(ctx, &output, w)
 }
 
 func (uc *userController) GetUser(w http.ResponseWriter, r *http.Request) {
@@ -68,7 +72,9 @@ func (uc *userController) GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 	user.Xtoken = token
 	ctx := r.Context()
-	uc.ui.GetUser(ctx, &user, w)
+	// todo エラー
+	output, _ := uc.ui.GetUser(ctx, &user)
+	uc.up.GetUser(ctx, &output, w)
 }
 func (uc *userController) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
@@ -109,5 +115,7 @@ func (uc *userController) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	user.Xtoken = token
 
 	ctx := r.Context()
-	uc.ui.UpdateUser(ctx, &user, w)
+	// todo エラー
+	output, _ := uc.ui.UpdateUser(ctx, &user)
+	uc.up.UpdateUser(ctx, &output, w)
 }
