@@ -37,7 +37,8 @@ func Serve(config *util.Config) {
 	gs := service.NewGachaService(repository)
 	cs := service.NewCharaService(repository)
 	gi := interactor.NewGachaInteractor(gs, cs)
-	gc := controller.NewGachaController(gi)
+	gp := presenter.NewGachaPresenter()
+	gc := controller.NewGachaController(gi, gp)
 	gr := router.NewGachaRouter(gc)
 
 	// middleware
