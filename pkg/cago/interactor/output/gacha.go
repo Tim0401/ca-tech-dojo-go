@@ -5,6 +5,6 @@ type DrawGacha struct {
 }
 
 type Chara struct {
-	ID   int32
+	ID   int
 	Name string
 }

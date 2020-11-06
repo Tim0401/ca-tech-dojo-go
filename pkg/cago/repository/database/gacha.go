@@ -11,16 +11,16 @@ type dbGachaRepository struct {
 	tx *sql.Tx
 }
 
-func (r *dbGachaRepository) FindAll() ([]model.Gacha, error) {
+func (r *dbGachaRepository) FindByGachaType(gachaTypeID int) ([]model.Gacha, error) {
 	var gacha []model.Gacha
 	var rows *sql.Rows
 	var err error
-	cmd := "SELECT id, chara_id, rate, created_at, updated_at FROM gacha"
+	cmd := "SELECT id, chara_id, gacha_type_id, rate_type_id, rate, created_at, updated_at FROM gacha where gacha_type_id = ?"
 
 	if r.db != nil {
-		rows, err = r.db.Query(cmd)
+		rows, err = r.db.Query(cmd, gachaTypeID)
 	} else {
-		rows, err = r.tx.Query(cmd)
+		rows, err = r.tx.Query(cmd, gachaTypeID)
 	}
 
 	if err != nil {
@@ -30,7 +30,7 @@ func (r *dbGachaRepository) FindAll() ([]model.Gacha, error) {
 
 	for rows.Next() {
 		var gachaRow model.Gacha
-		if err := rows.Scan(&gachaRow.ID, &gachaRow.CharaID, &gachaRow.Rate, &gachaRow.CreatedAt, &gachaRow.UpdatedAt); err != nil {
+		if err := rows.Scan(&gachaRow.ID, &gachaRow.CharaID, &gachaRow.GachaTypeID, &gachaRow.RateTypeID, &gachaRow.Rate, &gachaRow.CreatedAt, &gachaRow.UpdatedAt); err != nil {
 			log.Fatal(err)
 			return gacha, err
 		}

@@ -39,7 +39,6 @@ create table IF not exists `chara_user`
     PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci comment='ユーザー所持キャラ';
 
-create UNIQUE INDEX chara_user_index on chara_user(user_id, chara_id);
 ALTER TABLE chara_user add FOREIGN KEY (user_id) references user(id);
 ALTER TABLE chara_user add FOREIGN KEY (chara_id) references chara(id);
 
@@ -82,6 +81,7 @@ create table IF not exists `gacha`
  `chara_id`         INT(20) NOT NULL,
  `gacha_type_id`    INT(20) NOT NULL,
  `rate_type_id`     INT(20) NOT NULL,
+ `rate`             INT(20) NOT NULL DEFAULT 1,
  `created_at`       Datetime NOT NULL,
  `updated_at`       Datetime DEFAULT NULL,
     PRIMARY KEY (`id`)

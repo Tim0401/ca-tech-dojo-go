@@ -3,9 +3,10 @@ package output
 import "ca-tech-dojo-go/pkg/cago/service/io"
 
 type DrawGacha struct {
-	CharaID int32
+	CharaID int
 }
 
 type GetGachaRate struct {
-	CharaRates []io.CharaRate
+	CharaRates map[int]*io.CharaRates
+	RateTypes  *io.RateTypes
 }

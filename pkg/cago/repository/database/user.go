@@ -12,7 +12,7 @@ type dbUserRepository struct {
 	tx *sql.Tx
 }
 
-func (r *dbUserRepository) Find(id int32) (model.User, error) {
+func (r *dbUserRepository) Find(id int) (model.User, error) {
 	var user model.User
 	var row *sql.Row
 	cmd := "SELECT id, name, token, created_at, updated_at FROM user WHERE id = ?"
@@ -55,7 +55,7 @@ func (r *dbUserRepository) Create(user *model.User) error {
 	return err
 }
 
-func (r *dbUserRepository) UpdateName(name string, UpdatedAt time.Time, id int32) error {
+func (r *dbUserRepository) UpdateName(name string, UpdatedAt time.Time, id int) error {
 	tx := r.tx
 	cmd := "UPDATE user SET name = ?, updated_at = ? WHERE id = ?"
 	_, err := tx.Exec(cmd, name, UpdatedAt, id)

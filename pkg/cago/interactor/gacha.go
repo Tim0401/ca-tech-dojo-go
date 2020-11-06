@@ -28,7 +28,9 @@ func (gi *gachaInteractor) DrawGacha(ctx context.Context, gacha *input.DrawGacha
 	var getRateInput sInput.GetGachaRate
 	var out output.DrawGacha
 
-	// ガチャレート取得
+	// ガチャ対象キャラとレートタイプ取得
+	// todo constをどこにかく？
+	getRateInput.GachaType = 1
 	getRateOutput, err := gi.gs.GetGachaRate(ctx, &getRateInput)
 	if err != nil {
 		return out, err
@@ -36,8 +38,9 @@ func (gi *gachaInteractor) DrawGacha(ctx context.Context, gacha *input.DrawGacha
 
 	// ガチャ
 	var drawGachaInput sInput.DrawGacha
-	var charaIDs []int32
+	var charaIDs []int
 	drawGachaInput.CharaRates = getRateOutput.CharaRates
+	drawGachaInput.RateTypes = getRateOutput.RateTypes
 	for i := 0; i < int(gacha.Times); i++ {
 		drawGachaOutput, err := gi.gs.DrawGacha(ctx, &drawGachaInput)
 		if err != nil {

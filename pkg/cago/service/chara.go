@@ -38,7 +38,7 @@ func (cs *charaService) GetCharas(ctx context.Context, chara *input.GetCharas) (
 	}
 
 	// 格納
-	outputGetCharas.CharaName = make(map[int32]string)
+	outputGetCharas.CharaName = make(map[int]string)
 	for _, charaModel := range charaModels {
 		outputGetCharas.CharaName[charaModel.ID] = charaModel.Name
 	}

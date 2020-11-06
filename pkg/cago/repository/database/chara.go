@@ -13,7 +13,7 @@ type dbCharaRepository struct {
 	tx *sql.Tx
 }
 
-func (r *dbCharaRepository) FindByIDs(IDs []int32) ([]model.Chara, error) {
+func (r *dbCharaRepository) FindByIDs(IDs []int) ([]model.Chara, error) {
 	var chara []model.Chara
 	var rows *sql.Rows
 	var err error
@@ -53,7 +53,7 @@ func (r *dbCharaRepository) FindByIDs(IDs []int32) ([]model.Chara, error) {
 	return chara, nil
 }
 
-func (r *dbCharaRepository) AddUserChara(charaIDs []int32, CreatedAt time.Time, userID int32) error {
+func (r *dbCharaRepository) AddUserChara(charaIDs []int, CreatedAt time.Time, userID int) error {
 	tx := r.tx
 	cmd := "INSERT INTO chara_user (user_id, chara_id, created_at) VALUES (?, ?, ?)" + strings.Repeat(",(?, ?, ?)", len(charaIDs)-1)
 

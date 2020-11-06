@@ -3,6 +3,10 @@ package main
 import (
 	"ca-tech-dojo-go/pkg/cago"
 	"ca-tech-dojo-go/pkg/util"
+	crand "crypto/rand"
+	"math"
+	"math/big"
+	"math/rand"
 	"time"
 )
 
@@ -24,6 +28,10 @@ func init() {
 		panic(err.Error())
 	}
 	gConfig = config
+
+	// 乱数シード
+	seed, _ := crand.Int(crand.Reader, big.NewInt(math.MaxInt64))
+	rand.Seed(seed.Int64())
 }
 
 func main() {

@@ -7,7 +7,7 @@ import (
 
 // Gacha Gacha Model
 type Chara struct {
-	ID        int32
+	ID        int
 	Name      string
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime

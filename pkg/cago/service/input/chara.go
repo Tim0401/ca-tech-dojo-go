@@ -1,10 +1,10 @@
 package input
 
 type GetCharas struct {
-	IDs []int32
+	IDs []int
 }
 
 type AddUserChara struct {
-	UserID   int32
-	CharaIDs []int32
+	UserID   int
+	CharaIDs []int
 }

@@ -5,10 +5,10 @@ type CreateUser struct {
 }
 
 type GetUser struct {
-	ID int32
+	ID int
 }
 
 type UpdateUser struct {
-	ID   int32
+	ID   int
 	Name string
 }

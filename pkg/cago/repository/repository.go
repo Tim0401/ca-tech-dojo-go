@@ -17,6 +17,7 @@ type Connection interface {
 	User() UserQuery
 	Gacha() GachaQuery
 	Chara() CharaQuery
+	RateType() RateTypeQuery
 }
 
 type Transaction interface {
@@ -25,7 +26,7 @@ type Transaction interface {
 }
 
 type UserQuery interface {
-	Find(id int32) (model.User, error)
+	Find(id int) (model.User, error)
 	FindByToken(token string) (model.User, error)
 }
 
@@ -33,17 +34,21 @@ type UserCommand interface {
 	UserQuery
 
 	Create(user *model.User) error
-	UpdateName(name string, UpdatedAt time.Time, id int32) error
+	UpdateName(name string, UpdatedAt time.Time, id int) error
 }
 
 type GachaQuery interface {
-	FindAll() ([]model.Gacha, error)
+	FindByGachaType(gachaTypeID int) ([]model.Gacha, error)
 }
 
 type CharaQuery interface {
-	FindByIDs(IDs []int32) ([]model.Chara, error)
+	FindByIDs(IDs []int) ([]model.Chara, error)
 }
 
 type CharaCommand interface {
-	AddUserChara(charaIDs []int32, CreatedAt time.Time, userID int32) error
+	AddUserChara(charaIDs []int, CreatedAt time.Time, userID int) error
+}
+
+type RateTypeQuery interface {
+	FindByGachaType(gachaTypeID int) ([]model.RateType, error)
 }

@@ -7,9 +7,11 @@ import (
 
 // Gacha Gacha Model
 type Gacha struct {
-	ID        int32
-	CharaID   int32
-	Rate      float64
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
+	ID          int
+	CharaID     int
+	GachaTypeID int
+	RateTypeID  int
+	Rate        int
+	CreatedAt   time.Time
+	UpdatedAt   sql.NullTime
 }

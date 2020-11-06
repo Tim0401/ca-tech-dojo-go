@@ -1,6 +1,6 @@
 package io
 
 type Chara struct {
-	ID   int32
+	ID   int
 	Name string
 }

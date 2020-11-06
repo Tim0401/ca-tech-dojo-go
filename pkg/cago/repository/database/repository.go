@@ -79,3 +79,7 @@ func (con *dbConnection) Chara() repository.CharaQuery {
 func (tx *dbTransaction) Chara() repository.CharaCommand {
 	return &dbCharaRepository{tx: tx.db}
 }
+
+func (con *dbConnection) RateType() repository.RateTypeQuery {
+	return &dbRateTypeRepository{db: con.db}
+}
