@@ -19,10 +19,10 @@ func (r *dbCharaRepository) FindByIDs(IDs []int) ([]model.Chara, error) {
 	var err error
 	cmd := "SELECT id, name, created_at, updated_at FROM chara WHERE id IN (?" + strings.Repeat(",?", len(IDs)-1) + ")"
 
-	var vars []interface{}
+	vars := make([]interface{}, 0, len(IDs))
 
-	for _, s := range IDs {
-		vars = append(vars, s)
+	for _, id := range IDs {
+		vars = append(vars, id)
 	}
 
 	if r.db != nil {
@@ -57,12 +57,10 @@ func (r *dbCharaRepository) AddUserChara(charaIDs []int, CreatedAt time.Time, us
 	tx := r.tx
 	cmd := "INSERT INTO chara_user (user_id, chara_id, created_at) VALUES (?, ?, ?)" + strings.Repeat(",(?, ?, ?)", len(charaIDs)-1)
 
-	var vars []interface{}
+	vars := make([]interface{}, 0, len(charaIDs)*3)
 
-	for _, s := range charaIDs {
-		vars = append(vars, userID)
-		vars = append(vars, s)
-		vars = append(vars, CreatedAt)
+	for _, charaID := range charaIDs {
+		vars = append(vars, userID, charaID, CreatedAt)
 	}
 	_, err := tx.Exec(cmd, vars...)
 

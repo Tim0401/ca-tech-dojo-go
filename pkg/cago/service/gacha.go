@@ -10,7 +10,7 @@ import (
 	"math/rand"
 )
 
-// UserService ユーザーサービス
+// GachaService GachaService
 type GachaService interface {
 	GetGachaRate(ctx context.Context, user *input.GetGachaRate) (output.GetGachaRate, error)
 	DrawGacha(ctx context.Context, user *input.DrawGacha) (output.DrawGacha, error)
@@ -34,26 +34,7 @@ func (gs *gachaService) GetGachaRate(ctx context.Context, gacha *input.GetGachaR
 	}
 	defer con.Close()
 
-	gachaModels, err := con.Gacha().FindByGachaType(gacha.GachaType)
-	if err != nil {
-		return outputGachaRate, err
-	}
-
-	// 格納
-	charaRates := make(map[int]*io.CharaRates)
-	for _, gachaModel := range gachaModels {
-		var charaRate io.CharaRate
-		charaRate.CharaID = gachaModel.CharaID
-		charaRate.RateTypeID = gachaModel.RateTypeID
-		charaRate.Rate = gachaModel.Rate
-		if _, ok := charaRates[int(charaRate.RateTypeID)]; !ok {
-			charaRates[int(charaRate.RateTypeID)] = new(io.CharaRates)
-		}
-		charaRates[int(charaRate.RateTypeID)].SumRate += charaRate.Rate
-		charaRates[int(charaRate.RateTypeID)].CharaRateArray = append(charaRates[int(charaRate.RateTypeID)].CharaRateArray, &charaRate)
-	}
-	outputGachaRate.CharaRates = charaRates
-
+	// 確率タイプ
 	rateTypeModels, err := con.RateType().FindByGachaType(gacha.GachaType)
 	if err != nil {
 		return outputGachaRate, err
@@ -68,6 +49,27 @@ func (gs *gachaService) GetGachaRate(ctx context.Context, gacha *input.GetGachaR
 		outputGachaRate.RateTypes.SumRate += rateType.Rate
 		outputGachaRate.RateTypes.RateTypeArray = append(outputGachaRate.RateTypes.RateTypeArray, &rateType)
 	}
+
+	// キャラごとの確率
+	gachaModels, err := con.Gacha().FindByGachaType(gacha.GachaType)
+	if err != nil {
+		return outputGachaRate, err
+	}
+
+	//格納
+	charaRates := make(map[int]*io.CharaRates, len(rateTypeModels))
+	for _, gachaModel := range gachaModels {
+		var charaRate io.CharaRate
+		charaRate.CharaID = gachaModel.CharaID
+		charaRate.RateTypeID = gachaModel.RateTypeID
+		charaRate.Rate = gachaModel.Rate
+		if _, ok := charaRates[int(charaRate.RateTypeID)]; !ok {
+			charaRates[int(charaRate.RateTypeID)] = new(io.CharaRates)
+		}
+		charaRates[int(charaRate.RateTypeID)].SumRate += charaRate.Rate
+		charaRates[int(charaRate.RateTypeID)].CharaRateArray = append(charaRates[int(charaRate.RateTypeID)].CharaRateArray, &charaRate)
+	}
+	outputGachaRate.CharaRates = charaRates
 
 	return outputGachaRate, err
 }
