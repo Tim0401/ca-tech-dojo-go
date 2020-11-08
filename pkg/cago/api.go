@@ -25,12 +25,23 @@ func Serve(config *util.Config) {
 	defer db.Close()
 
 	repository := database.NewRepository(db)
+
+	// user
 	us := service.NewUserService(repository)
 	ui := interactor.NewUserInteractor(us)
 	up := presenter.NewUserPresenter()
 	uc := controller.NewUserController(ui, up)
 	ur := router.NewUserRouter(uc)
 
+	// gacha
+	gs := service.NewGachaService(repository)
+	cs := service.NewCharaService(repository)
+	gi := interactor.NewGachaInteractor(gs, cs)
+	gp := presenter.NewGachaPresenter()
+	gc := controller.NewGachaController(gi, gp)
+	gr := router.NewGachaRouter(gc)
+
+	// middleware
 	authMiddleware := middleware.NewAuthMiddleware(repository)
 	middlewares := middleware.NewMws(authMiddleware)
 
@@ -38,5 +49,6 @@ func Serve(config *util.Config) {
 
 	mux.HandleFunc("/user/create", ur.UserRouter)
 	mux.HandleFunc("/user/", middlewares.Then(ur.UserRouter))
+	mux.HandleFunc("/gacha/", middlewares.Then(gr.GachaRouter))
 	http.ListenAndServe(":8080", mux)
 }
