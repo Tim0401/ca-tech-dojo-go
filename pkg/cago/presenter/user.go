@@ -4,6 +4,7 @@ import (
 	"ca-tech-dojo-go/pkg/cago/presenter/input"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -64,7 +65,8 @@ func (up *userPresenter) UpdateUser(ctx context.Context, user *input.UpdateUser,
 func (up *userPresenter) ShowError(ctx context.Context, err *input.ShowError, w http.ResponseWriter) {
 	// output
 	if err.E != nil {
-		http.Error(w, err.E.Error(), http.StatusInternalServerError)
+		fmt.Printf("%+v\n", err.E)
+		http.Error(w, err.E.Error(), err.Status)
 		return
 	} else {
 		w.WriteHeader(http.StatusInternalServerError)

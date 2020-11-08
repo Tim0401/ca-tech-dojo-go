@@ -8,8 +8,9 @@ import (
 	"ca-tech-dojo-go/pkg/cago/presenter"
 	pInput "ca-tech-dojo-go/pkg/cago/presenter/input"
 	"encoding/json"
-	"fmt"
 	"net/http"
+
+	"golang.org/x/xerrors"
 )
 
 type UserController interface {
@@ -30,27 +31,36 @@ func NewUserController(ui interactor.UserInteractor, up presenter.UserPresenter)
 
 func (uc *userController) CreateUser(w http.ResponseWriter, r *http.Request) {
 
+	ctx := r.Context()
+
 	if r.Header.Get("Content-Type") != "application/json" {
-		w.WriteHeader(http.StatusBadRequest)
+		var presenterError pInput.ShowError
+		presenterError.E = xerrors.New("Content-Typeがapplication/jsonではありません")
+		presenterError.Status = http.StatusBadRequest
+		uc.up.ShowError(ctx, &presenterError, w)
 		return
 	}
 
 	//parse json
 	var controllerUser cInput.CreateUser
 	if err := json.NewDecoder(r.Body).Decode(&controllerUser); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		var presenterError pInput.ShowError
+		presenterError.E = xerrors.Errorf("jsonのデコードに失敗しました: %w", err)
+		presenterError.Status = http.StatusInternalServerError
+		uc.up.ShowError(ctx, &presenterError, w)
 		return
 	}
 
-	ctx := r.Context()
 	var interactorUser iInput.CreateUser
 	interactorUser.Name = controllerUser.Name
 
 	output, err := uc.ui.CreateUser(ctx, &interactorUser)
 	if err != nil {
 		var presenterError pInput.ShowError
-		presenterError.E = err
+		presenterError.E = xerrors.Errorf("message: %w", err)
+		presenterError.Status = http.StatusInternalServerError
 		uc.up.ShowError(ctx, &presenterError, w)
+		return
 	}
 
 	var presenterUser pInput.CreateUser
@@ -63,8 +73,10 @@ func (uc *userController) GetUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	modelUser, ok := ctx.Value(model.UserKey).(model.User)
 	if !ok {
-		fmt.Printf("ctxから取得した値をmodel.Userに変換できません。")
-		w.WriteHeader(http.StatusInternalServerError)
+		var presenterError pInput.ShowError
+		presenterError.E = xerrors.New("ctxから取得した値をmodel.Userに変換できません")
+		presenterError.Status = http.StatusInternalServerError
+		uc.up.ShowError(ctx, &presenterError, w)
 		return
 	}
 	var interactorUser iInput.GetUser
@@ -73,8 +85,10 @@ func (uc *userController) GetUser(w http.ResponseWriter, r *http.Request) {
 	output, err := uc.ui.GetUser(ctx, &interactorUser)
 	if err != nil {
 		var presenterError pInput.ShowError
-		presenterError.E = err
+		presenterError.E = xerrors.Errorf("message: %w", err)
+		presenterError.Status = http.StatusInternalServerError
 		uc.up.ShowError(ctx, &presenterError, w)
+		return
 	}
 
 	var presenterUser pInput.GetUser
@@ -83,33 +97,44 @@ func (uc *userController) GetUser(w http.ResponseWriter, r *http.Request) {
 }
 func (uc *userController) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
+	ctx := r.Context()
+
 	if r.Header.Get("Content-Type") != "application/json" {
-		w.WriteHeader(http.StatusBadRequest)
+		var presenterError pInput.ShowError
+		presenterError.E = xerrors.New("Content-Typeがapplication/jsonではありません")
+		presenterError.Status = http.StatusBadRequest
+		uc.up.ShowError(ctx, &presenterError, w)
 		return
 	}
 
 	var controllerUser cInput.UpdateUser
 	if err := json.NewDecoder(r.Body).Decode(&controllerUser); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		var presenterError pInput.ShowError
+		presenterError.E = xerrors.Errorf("jsonのデコードに失敗しました: %w", err)
+		presenterError.Status = http.StatusInternalServerError
+		uc.up.ShowError(ctx, &presenterError, w)
 		return
 	}
 
-	ctx := r.Context()
 	modelUser, ok := ctx.Value(model.UserKey).(model.User)
 	if !ok {
-		fmt.Printf("ctxから取得した値をmodel.Userに変換できません。")
-		w.WriteHeader(http.StatusInternalServerError)
+		var presenterError pInput.ShowError
+		presenterError.E = xerrors.New("ctxから取得した値をmodel.Userに変換できません")
+		presenterError.Status = http.StatusInternalServerError
+		uc.up.ShowError(ctx, &presenterError, w)
 		return
 	}
 
 	var interactorUser iInput.UpdateUser
 	interactorUser.ID = modelUser.ID
 	interactorUser.Name = controllerUser.Name
-	// todo エラー
+
 	if _, err := uc.ui.UpdateUser(ctx, &interactorUser); err != nil {
 		var presenterError pInput.ShowError
-		presenterError.E = err
+		presenterError.E = xerrors.Errorf("message: %w", err)
+		presenterError.Status = http.StatusInternalServerError
 		uc.up.ShowError(ctx, &presenterError, w)
+		return
 	}
 
 	var presenterUser pInput.UpdateUser

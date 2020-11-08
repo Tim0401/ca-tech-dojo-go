@@ -9,4 +9,5 @@ require (
 	github.com/jinzhu/gorm v1.9.16
 	github.com/mayah/go-repository-sample v0.0.0-20191224151932-20159e193862 // indirect
 	github.com/pkg/errors v0.9.1
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
 )

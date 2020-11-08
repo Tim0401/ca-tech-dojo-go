@@ -8,8 +8,9 @@ import (
 	"ca-tech-dojo-go/pkg/cago/presenter"
 	pInput "ca-tech-dojo-go/pkg/cago/presenter/input"
 	"encoding/json"
-	"fmt"
 	"net/http"
+
+	"golang.org/x/xerrors"
 )
 
 type GachaController interface {
@@ -28,22 +29,31 @@ func NewGachaController(gi interactor.GachaInteractor, gp presenter.GachaPresent
 
 func (gc *gachaController) DrawGacha(w http.ResponseWriter, r *http.Request) {
 
+	ctx := r.Context()
+
 	if r.Header.Get("Content-Type") != "application/json" {
-		w.WriteHeader(http.StatusBadRequest)
+		var presenterError pInput.ShowError
+		presenterError.E = xerrors.New("Content-Typeがapplication/jsonではありません")
+		presenterError.Status = http.StatusBadRequest
+		gc.gp.ShowError(ctx, &presenterError, w)
 		return
 	}
 
 	var controllerInput cInput.DrawGacha
 	if err := json.NewDecoder(r.Body).Decode(&controllerInput); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		var presenterError pInput.ShowError
+		presenterError.E = xerrors.Errorf("jsonのデコードに失敗しました: %w", err)
+		presenterError.Status = http.StatusInternalServerError
+		gc.gp.ShowError(ctx, &presenterError, w)
 		return
 	}
 
-	ctx := r.Context()
 	modelUser, ok := ctx.Value(model.UserKey).(model.User)
 	if !ok {
-		fmt.Printf("ctxから取得した値をmodel.Userに変換できません。")
-		w.WriteHeader(http.StatusInternalServerError)
+		var presenterError pInput.ShowError
+		presenterError.E = xerrors.New("ctxから取得した値をmodel.Userに変換できません")
+		presenterError.Status = http.StatusInternalServerError
+		gc.gp.ShowError(ctx, &presenterError, w)
 		return
 	}
 
@@ -54,7 +64,9 @@ func (gc *gachaController) DrawGacha(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		var presenterError pInput.ShowError
 		presenterError.E = err
+		presenterError.Status = http.StatusInternalServerError
 		gc.gp.ShowError(ctx, &presenterError, w)
+		return
 	}
 
 	var presenterGacha pInput.DrawGacha
