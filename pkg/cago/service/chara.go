@@ -32,7 +32,6 @@ func (cs *charaService) GetCharas(ctx context.Context, chara *input.GetCharas) (
 	if err != nil {
 		return outputGetCharas, err
 	}
-	defer con.Close()
 
 	charaModels, err := con.Chara().FindByIDs(chara.IDs)
 	if err != nil {
@@ -55,7 +54,6 @@ func (cs *charaService) AddUserChara(ctx context.Context, chara *input.AddUserCh
 	if err != nil {
 		return outputAddUserChara, err
 	}
-	defer con.Close()
 
 	err = con.RunTransaction(func(tx repository.Transaction) error {
 		err := tx.Chara().AddUserChara(chara.CharaIDs, time.Now(), chara.UserID)
@@ -76,7 +74,6 @@ func (cs *charaService) GetUserCharas(ctx context.Context, chara *input.GetUserC
 	if err != nil {
 		return outputGetUserCharas, err
 	}
-	defer con.Close()
 
 	userCharaModels, err := con.Chara().FindUserCharaByUserID(chara.UserID)
 	if err != nil {

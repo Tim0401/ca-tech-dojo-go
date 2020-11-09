@@ -34,7 +34,6 @@ func (us *userService) GetUser(ctx context.Context, user *input.GetUser) (output
 	if err != nil {
 		return outputUser, err
 	}
-	defer con.Close()
 
 	userModel, err := con.User().Find(user.ID)
 	if err != nil {
@@ -58,7 +57,6 @@ func (us *userService) CreateUser(ctx context.Context, user *input.CreateUser) (
 	if err != nil {
 		return outputUser, err
 	}
-	defer con.Close()
 
 	err = con.RunTransaction(func(tx repository.Transaction) error {
 		err := tx.User().Create(&modelUser)
@@ -81,7 +79,6 @@ func (us *userService) UpdateUser(ctx context.Context, user *input.UpdateUser) (
 	if err != nil {
 		return outputUser, err
 	}
-	defer con.Close()
 
 	err = con.RunTransaction(func(tx repository.Transaction) error {
 		err := tx.User().UpdateName(user.Name, time.Now(), user.ID)

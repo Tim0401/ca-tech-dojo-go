@@ -32,7 +32,6 @@ func (gs *gachaService) GetGachaRate(ctx context.Context, gacha *input.GetGachaR
 	if err != nil {
 		return outputGachaRate, err
 	}
-	defer con.Close()
 
 	// 確率タイプ
 	rateTypeModels, err := con.RateType().FindByGachaType(gacha.GachaType)
