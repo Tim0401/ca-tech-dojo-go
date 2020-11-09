@@ -8,3 +8,7 @@ type AddUserChara struct {
 	UserID   int
 	CharaIDs []int
 }
+
+type GetUserCharas struct {
+	UserID int
+}

@@ -43,6 +43,7 @@ type GachaQuery interface {
 
 type CharaQuery interface {
 	FindByIDs(IDs []int) ([]model.Chara, error)
+	FindUserCharaByUserID(UserID int) ([]model.CharaUser, error)
 }
 
 type CharaCommand interface {

@@ -41,6 +41,12 @@ func Serve(config *util.Config) {
 	gc := controller.NewGachaController(gi, gp)
 	gr := router.NewGachaRouter(gc)
 
+	// character
+	ci := interactor.NewCharaInteractor(cs)
+	cp := presenter.NewCharaPresenter()
+	cc := controller.NewCharaController(ci, cp)
+	cr := router.NewCharaRouter(cc)
+
 	// middleware
 	authMiddleware := middleware.NewAuthMiddleware(repository)
 	middlewares := middleware.NewMws(authMiddleware)
@@ -50,5 +56,6 @@ func Serve(config *util.Config) {
 	mux.HandleFunc("/user/create", ur.UserRouter)
 	mux.HandleFunc("/user/", middlewares.Then(ur.UserRouter))
 	mux.HandleFunc("/gacha/", middlewares.Then(gr.GachaRouter))
+	mux.HandleFunc("/character/", middlewares.Then(cr.CharaRouter))
 	http.ListenAndServe(":8080", mux)
 }

@@ -3,6 +3,7 @@ package service
 import (
 	"ca-tech-dojo-go/pkg/cago/repository"
 	"ca-tech-dojo-go/pkg/cago/service/input"
+	"ca-tech-dojo-go/pkg/cago/service/io"
 	"ca-tech-dojo-go/pkg/cago/service/output"
 	"context"
 	"time"
@@ -10,8 +11,9 @@ import (
 
 // CharaService CharaService
 type CharaService interface {
-	GetCharas(ctx context.Context, user *input.GetCharas) (output.GetCharas, error)
-	AddUserChara(ctx context.Context, user *input.AddUserChara) (output.AddUserChara, error)
+	GetCharas(ctx context.Context, chara *input.GetCharas) (output.GetCharas, error)
+	AddUserChara(ctx context.Context, chara *input.AddUserChara) (output.AddUserChara, error)
+	GetUserCharas(ctx context.Context, chara *input.GetUserCharas) (output.GetUserCharas, error)
 }
 
 type charaService struct {
@@ -65,4 +67,29 @@ func (cs *charaService) AddUserChara(ctx context.Context, chara *input.AddUserCh
 	})
 
 	return outputAddUserChara, err
+}
+
+func (cs *charaService) GetUserCharas(ctx context.Context, chara *input.GetUserCharas) (output.GetUserCharas, error) {
+	var outputGetUserCharas output.GetUserCharas
+
+	con, err := cs.r.NewConnection()
+	if err != nil {
+		return outputGetUserCharas, err
+	}
+	defer con.Close()
+
+	userCharaModels, err := con.Chara().FindUserCharaByUserID(chara.UserID)
+	if err != nil {
+		return outputGetUserCharas, err
+	}
+
+	// 格納
+	for _, userCharaModel := range userCharaModels {
+		var userChara io.UserChara
+		userChara.ID = userCharaModel.ID
+		userChara.CharaID = userCharaModel.CharaID
+		outputGetUserCharas.Charas = append(outputGetUserCharas.Charas, userChara)
+	}
+
+	return outputGetUserCharas, err
 }

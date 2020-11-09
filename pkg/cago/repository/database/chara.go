@@ -3,7 +3,6 @@ package database
 import (
 	"ca-tech-dojo-go/pkg/cago/model"
 	"database/sql"
-	"log"
 	"strings"
 	"time"
 )
@@ -17,6 +16,11 @@ func (r *dbCharaRepository) FindByIDs(IDs []int) ([]model.Chara, error) {
 	var chara []model.Chara
 	var rows *sql.Rows
 	var err error
+
+	if len(IDs) <= 0 {
+		return chara, nil
+	}
+
 	cmd := "SELECT id, name, created_at, updated_at FROM chara WHERE id IN (?" + strings.Repeat(",?", len(IDs)-1) + ")"
 
 	vars := make([]interface{}, 0, len(IDs))
@@ -32,25 +36,53 @@ func (r *dbCharaRepository) FindByIDs(IDs []int) ([]model.Chara, error) {
 	}
 
 	if err != nil {
-		log.Fatal(err)
 		return chara, err
 	}
 
 	for rows.Next() {
-		var gachaRow model.Chara
-		if err := rows.Scan(&gachaRow.ID, &gachaRow.Name, &gachaRow.CreatedAt, &gachaRow.UpdatedAt); err != nil {
-			log.Fatal(err)
+		var charaRow model.Chara
+		if err := rows.Scan(&charaRow.ID, &charaRow.Name, &charaRow.CreatedAt, &charaRow.UpdatedAt); err != nil {
 			return chara, err
 		}
-		chara = append(chara, gachaRow)
+		chara = append(chara, charaRow)
 	}
 
 	if err := rows.Err(); err != nil {
-		log.Fatal(err)
 		return chara, err
 	}
 
 	return chara, nil
+}
+
+func (r *dbCharaRepository) FindUserCharaByUserID(UserID int) ([]model.CharaUser, error) {
+	var userCharas []model.CharaUser
+	var rows *sql.Rows
+	var err error
+	cmd := "SELECT id, user_id, chara_id, created_at, updated_at FROM chara_user WHERE user_id = ?"
+
+	if r.db != nil {
+		rows, err = r.db.Query(cmd, UserID)
+	} else {
+		rows, err = r.tx.Query(cmd, UserID)
+	}
+
+	if err != nil {
+		return userCharas, err
+	}
+
+	for rows.Next() {
+		var charaUserRow model.CharaUser
+		if err := rows.Scan(&charaUserRow.ID, &charaUserRow.UserID, &charaUserRow.CharaID, &charaUserRow.CreatedAt, &charaUserRow.UpdatedAt); err != nil {
+			return userCharas, err
+		}
+		userCharas = append(userCharas, charaUserRow)
+	}
+
+	if err := rows.Err(); err != nil {
+		return userCharas, err
+	}
+
+	return userCharas, nil
 }
 
 func (r *dbCharaRepository) AddUserChara(charaIDs []int, CreatedAt time.Time, userID int) error {
