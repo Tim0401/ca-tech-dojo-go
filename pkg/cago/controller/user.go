@@ -57,7 +57,7 @@ func (uc *userController) CreateUser(w http.ResponseWriter, r *http.Request) {
 	output, err := uc.ui.CreateUser(ctx, &interactorUser)
 	if err != nil {
 		var presenterError pInput.ShowError
-		presenterError.E = xerrors.Errorf("message: %w", err)
+		presenterError.E = xerrors.Errorf("Call CreateUser: %w", err)
 		presenterError.Status = http.StatusInternalServerError
 		uc.up.ShowError(ctx, &presenterError, w)
 		return
@@ -85,7 +85,7 @@ func (uc *userController) GetUser(w http.ResponseWriter, r *http.Request) {
 	output, err := uc.ui.GetUser(ctx, &interactorUser)
 	if err != nil {
 		var presenterError pInput.ShowError
-		presenterError.E = xerrors.Errorf("message: %w", err)
+		presenterError.E = xerrors.Errorf("Call GetUser: %w", err)
 		presenterError.Status = http.StatusInternalServerError
 		uc.up.ShowError(ctx, &presenterError, w)
 		return
@@ -131,7 +131,7 @@ func (uc *userController) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	if _, err := uc.ui.UpdateUser(ctx, &interactorUser); err != nil {
 		var presenterError pInput.ShowError
-		presenterError.E = xerrors.Errorf("message: %w", err)
+		presenterError.E = xerrors.Errorf("Call UpdateUser: %w", err)
 		presenterError.Status = http.StatusInternalServerError
 		uc.up.ShowError(ctx, &presenterError, w)
 		return

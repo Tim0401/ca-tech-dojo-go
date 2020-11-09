@@ -43,7 +43,7 @@ func (cc *charaController) GetCharaList(w http.ResponseWriter, r *http.Request) 
 	outputGetCharaList, err := cc.ci.GetCharaList(ctx, &interactorInput)
 	if err != nil {
 		var presenterError pInput.ShowError
-		presenterError.E = err
+		presenterError.E = xerrors.Errorf("Call GetCharaList: %w", err)
 		presenterError.Status = http.StatusInternalServerError
 		cc.cp.ShowError(ctx, &presenterError, w)
 		return

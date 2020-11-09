@@ -63,7 +63,7 @@ func (gc *gachaController) DrawGacha(w http.ResponseWriter, r *http.Request) {
 	outputDrawGacha, err := gc.gi.DrawGacha(ctx, &interactorInput)
 	if err != nil {
 		var presenterError pInput.ShowError
-		presenterError.E = err
+		presenterError.E = xerrors.Errorf("Call DrawGacha: %w", err)
 		presenterError.Status = http.StatusInternalServerError
 		gc.gp.ShowError(ctx, &presenterError, w)
 		return
