@@ -35,8 +35,6 @@ func (rs *rankingService) GetUserRanking(ctx context.Context, ranking *input.Get
 	}
 	defer conn.Close()
 
-	rs.UpdateUserRanking(ctx)
-
 	userRanks, err := conn.Ranking().Top(-1)
 	if err != nil {
 		return outputGetUserRanking, xerrors.Errorf("Call Set: %w", err)

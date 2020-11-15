@@ -27,6 +27,8 @@ func (rr *rankingRouter) RankingRouter(w http.ResponseWriter, r *http.Request) {
 	case "/ranking/user":
 		if r.Method == http.MethodGet {
 			rr.rc.GetUserRanking(w, r)
+		} else if r.Method == http.MethodPost {
+			rr.rc.UpdateUserRanking(w, r)
 		} else {
 			err := xerrors.New("Method not allowed")
 			fmt.Printf("%+v\n", err)

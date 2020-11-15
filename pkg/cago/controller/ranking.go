@@ -12,6 +12,7 @@ import (
 
 type RankingController interface {
 	GetUserRanking(w http.ResponseWriter, r *http.Request)
+	UpdateUserRanking(w http.ResponseWriter, r *http.Request)
 }
 
 type rankingController struct {
@@ -54,4 +55,17 @@ func (rc *rankingController) GetUserRanking(w http.ResponseWriter, r *http.Reque
 		presenterInput.Results = []pInput.UserRank{}
 	}
 	rc.rp.GetUserRanking(ctx, &presenterInput, w)
+}
+
+func (rc *rankingController) UpdateUserRanking(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	err := rc.ri.UpdateUserRanking(ctx)
+	if err != nil {
+		var presenterError pInput.ShowError
+		presenterError.E = xerrors.Errorf("Call UpdateUserRanking: %w", err)
+		presenterError.Status = http.StatusInternalServerError
+		rc.rp.ShowError(ctx, &presenterError, w)
+		return
+	}
+	rc.rp.UpdateUserRanking(ctx, w)
 }

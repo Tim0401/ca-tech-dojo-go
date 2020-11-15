@@ -13,6 +13,7 @@ import (
 // RankingInteractor RankingInteractor
 type RankingInteractor interface {
 	GetUserRanking(ctx context.Context, ranking *input.GetUserRanking) (output.GetUserRanking, error)
+	UpdateUserRanking(ctx context.Context) error
 }
 
 type rankingInteractor struct {
@@ -43,7 +44,15 @@ func (ri *rankingInteractor) GetUserRanking(ctx context.Context, ranking *input.
 		userRank.UserName = ""
 		outputGetUserRanking.Ranks = append(outputGetUserRanking.Ranks, userRank)
 	}
-	// ユーザー名取得
+	// todo ユーザー名取得
 
 	return outputGetUserRanking, nil
+}
+
+func (ri *rankingInteractor) UpdateUserRanking(ctx context.Context) error {
+	err := ri.rs.UpdateUserRanking(ctx)
+	if err != nil {
+		return xerrors.Errorf("Call UpdateUserRanking: %w", err)
+	}
+	return nil
 }

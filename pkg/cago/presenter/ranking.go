@@ -11,6 +11,7 @@ import (
 // CharaPresenter CharaPresenter
 type RankingPresenter interface {
 	GetUserRanking(ctx context.Context, ranking *input.GetUserRanking, w http.ResponseWriter)
+	UpdateUserRanking(ctx context.Context, w http.ResponseWriter)
 	ShowError(ctx context.Context, err *input.ShowError, w http.ResponseWriter)
 }
 
@@ -32,6 +33,11 @@ func (rp *rankingPresenter) GetUserRanking(ctx context.Context, ranking *input.G
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
+}
+
+func (rp *rankingPresenter) UpdateUserRanking(ctx context.Context, w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func (rp *rankingPresenter) ShowError(ctx context.Context, err *input.ShowError, w http.ResponseWriter) {
