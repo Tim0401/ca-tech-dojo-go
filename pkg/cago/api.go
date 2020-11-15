@@ -14,7 +14,6 @@ import (
 	"net/http"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/gomodule/redigo/redis"
 )
 
@@ -78,5 +77,7 @@ func Serve(config *util.Config) {
 	mux.HandleFunc("/gacha/", middlewares.Then(gr.GachaRouter))
 	mux.HandleFunc("/character/", middlewares.Then(cr.CharaRouter))
 	mux.HandleFunc("/ranking/", middlewares.Then(rr.RankingRouter))
+
+	mux.HandleFunc("/debug/pprof/", http.DefaultServeMux.ServeHTTP)
 	http.ListenAndServe(":8080", mux)
 }

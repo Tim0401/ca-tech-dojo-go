@@ -8,6 +8,10 @@ import (
 	"math/big"
 	"math/rand"
 	"time"
+
+	_ "net/http/pprof"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 const location = "Asia/Tokyo"

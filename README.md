@@ -77,6 +77,10 @@ https://qiita.com/k-penguin-sato/items/62dfe0f93f56e4bf9157
 https://qiita.com/sonatard/items/9c9faf79ac03c20f4ae1  
 https://qiita.com/sonatard/items/5afd13a7640e628ee4d2  
 
+### pprof
+
+https://qiita.com/momotaro98/items/bd24a5d4603e378cc357  
+
 ## 設計
 
 ### DI
