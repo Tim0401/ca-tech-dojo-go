@@ -17,7 +17,7 @@ type Connection interface {
 	User() UserQuery
 	Gacha() GachaQuery
 	Chara() CharaQuery
-	RateType() RateTypeQuery
+	GachaProbabilityGroup() GachaProbabilityGroupQuery
 }
 
 type Transaction interface {
@@ -38,7 +38,7 @@ type UserCommand interface {
 }
 
 type GachaQuery interface {
-	FindByGachaType(gachaTypeID int) ([]model.Gacha, error)
+	FindByGroupIDs(groupIDs []string) ([]model.GachaProbability, error)
 }
 
 type CharaQuery interface {
@@ -50,6 +50,6 @@ type CharaCommand interface {
 	AddUserChara(charaIDs []int, CreatedAt time.Time, userID int) error
 }
 
-type RateTypeQuery interface {
-	FindByGachaType(gachaTypeID int) ([]model.RateType, error)
+type GachaProbabilityGroupQuery interface {
+	FindByGachaType(gachaTypeID int) ([]model.GachaProbabilityGroup, error)
 }

@@ -1,20 +1,20 @@
 package io
 
 type CharaRate struct {
-	CharaID    int
-	RateTypeID int
-	Rate       int
+	CharaID                 int
+	GachaProbabilityGroupID string
+	Rate                    int
 }
-type RateType struct {
-	ID   int
+type GachaProbabilityGroup struct {
+	ID   string
 	Rate int
 }
 
-type CharaRates struct {
-	CharaRateArray []*CharaRate
-	SumRate        int
+type CharaProbability struct {
+	CharaRates []*CharaRate
+	SumRate    int
 }
-type RateTypes struct {
-	RateTypeArray []*RateType
-	SumRate       int
+type GroupProbability struct {
+	GachaProbabilityGroups []*GachaProbabilityGroup
+	SumRate                int
 }

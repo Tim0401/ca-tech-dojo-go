@@ -39,8 +39,8 @@ func (gi *gachaInteractor) DrawGacha(ctx context.Context, gacha *input.DrawGacha
 	// ガチャ
 	var drawGachaInput sInput.DrawGacha
 	var charaIDs []int
-	drawGachaInput.CharaRates = getRateOutput.CharaRates
-	drawGachaInput.RateTypes = getRateOutput.RateTypes
+	drawGachaInput.CharaProbability = getRateOutput.CharaProbability
+	drawGachaInput.GroupProbability = getRateOutput.GroupProbability
 	for i := 0; i < int(gacha.Times); i++ {
 		drawGachaOutput, err := gi.gs.DrawGacha(ctx, &drawGachaInput)
 		if err != nil {

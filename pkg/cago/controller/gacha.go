@@ -76,5 +76,9 @@ func (gc *gachaController) DrawGacha(w http.ResponseWriter, r *http.Request) {
 		pChara.Name = chara.Name
 		presenterGacha.Results = append(presenterGacha.Results, pChara)
 	}
+	// 結果がない場合は空配列にする
+	if presenterGacha.Results == nil {
+		presenterGacha.Results = []pInput.Chara{}
+	}
 	gc.gp.DrawGacha(ctx, &presenterGacha, w)
 }

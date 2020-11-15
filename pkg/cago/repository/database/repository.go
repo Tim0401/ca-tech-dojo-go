@@ -80,6 +80,6 @@ func (tx *dbTransaction) Chara() repository.CharaCommand {
 	return &dbCharaRepository{tx: tx.db}
 }
 
-func (con *dbConnection) RateType() repository.RateTypeQuery {
-	return &dbRateTypeRepository{db: con.db}
+func (con *dbConnection) GachaProbabilityGroup() repository.GachaProbabilityGroupQuery {
+	return &dbGachaProbabilityGroupRepository{db: con.db}
 }

@@ -38,12 +38,12 @@ INSERT INTO gacha_probability (group_id, number, chara_id, created_at) VALUES ("
 INSERT INTO gacha_probability (group_id, number, chara_id, created_at) VALUES ("★3NOPU", 1, 10, NOW());
 
 ---- gacha_probability_group ----
-INSERT INTO gacha_probability_group (gacha_type_id, gacha_probability_group_id, rate, created_at) VALUES (1, "★1", 795, NOW());
-INSERT INTO gacha_probability_group (gacha_type_id, gacha_probability_group_id, rate, created_at) VALUES (1, "★2", 180, NOW());
-INSERT INTO gacha_probability_group (gacha_type_id, gacha_probability_group_id, rate, created_at) VALUES (1, "★3", 25, NOW());
+INSERT INTO gacha_probability_group (gacha_type_id, number, gacha_probability_group_id, rate, created_at) VALUES (1, 1, "★1", 795, NOW());
+INSERT INTO gacha_probability_group (gacha_type_id, number, gacha_probability_group_id, rate, created_at) VALUES (1, 2, "★2", 180, NOW());
+INSERT INTO gacha_probability_group (gacha_type_id, number, gacha_probability_group_id, rate, created_at) VALUES (1, 3, "★3", 25, NOW());
 
 ---- gacha_probability_group ----
-INSERT INTO gacha_probability_group (gacha_type_id, gacha_probability_group_id, rate, created_at) VALUES (2, "★1", 795, NOW());
-INSERT INTO gacha_probability_group (gacha_type_id, gacha_probability_group_id, rate, created_at) VALUES (2, "★2", 180, NOW());
-INSERT INTO gacha_probability_group (gacha_type_id, gacha_probability_group_id, rate, created_at) VALUES (2, "★3PU", 7, NOW());
-INSERT INTO gacha_probability_group (gacha_type_id, gacha_probability_group_id, rate, created_at) VALUES (2, "★3NOPU", 18, NOW());
+INSERT INTO gacha_probability_group (gacha_type_id, number, gacha_probability_group_id, rate, created_at) VALUES (2, 1, "★1", 795, NOW());
+INSERT INTO gacha_probability_group (gacha_type_id, number, gacha_probability_group_id, rate, created_at) VALUES (2, 2, "★2", 180, NOW());
+INSERT INTO gacha_probability_group (gacha_type_id, number, gacha_probability_group_id, rate, created_at) VALUES (2, 3, "★3PU", 7, NOW());
+INSERT INTO gacha_probability_group (gacha_type_id, number, gacha_probability_group_id, rate, created_at) VALUES (2, 4, "★3NOPU", 18, NOW());

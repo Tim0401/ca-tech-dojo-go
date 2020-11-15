@@ -86,6 +86,11 @@ func (r *dbCharaRepository) FindUserCharaByUserID(UserID int) ([]model.CharaUser
 }
 
 func (r *dbCharaRepository) AddUserChara(charaIDs []int, CreatedAt time.Time, userID int) error {
+
+	if len(charaIDs) <= 0 {
+		return nil
+	}
+
 	tx := r.tx
 	cmd := "INSERT INTO chara_user (user_id, chara_id, created_at) VALUES (?, ?, ?)" + strings.Repeat(",(?, ?, ?)", len(charaIDs)-1)
 

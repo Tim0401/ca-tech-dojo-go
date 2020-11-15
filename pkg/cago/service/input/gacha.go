@@ -3,8 +3,8 @@ package input
 import "ca-tech-dojo-go/pkg/cago/service/io"
 
 type DrawGacha struct {
-	CharaRates map[int]*io.CharaRates
-	RateTypes  *io.RateTypes
+	CharaProbability map[string]*io.CharaProbability
+	GroupProbability *io.GroupProbability
 }
 
 type GetGachaRate struct {

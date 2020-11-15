@@ -57,11 +57,12 @@ CREATE TABLE `gacha_type` (
 -- レアリティの排出確率
 CREATE TABLE `gacha_probability_group` (
   `gacha_type_id`              INT(20),
+  `number`                     INT(20), -- 1,2,3,
   `gacha_probability_group_id` VARCHAR(255),
   `rate`                       INT(20) NOT NULL DEFAULT 1,
   `created_at`                 Datetime NOT NULL,
   `updated_at`                 Datetime DEFAULT NULL,
-  PRIMARY KEY (`gacha_type_id`, `gacha_probability_group_id`)
+  PRIMARY KEY (`gacha_type_id`, `number`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci comment='ガチャ確率グループ';
 
 -- gacha_probability: chara_id=hoge: 1

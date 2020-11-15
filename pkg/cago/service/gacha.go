@@ -34,41 +34,43 @@ func (gs *gachaService) GetGachaRate(ctx context.Context, gacha *input.GetGachaR
 	}
 
 	// 確率タイプ
-	rateTypeModels, err := con.RateType().FindByGachaType(gacha.GachaType)
+	groupModels, err := con.GachaProbabilityGroup().FindByGachaType(gacha.GachaType)
 	if err != nil {
 		return outputGachaRate, err
 	}
 
+	groupIDs := make([]string, 0, len(groupModels))
 	// 格納
-	outputGachaRate.RateTypes = new(io.RateTypes)
-	for _, rateTypeModel := range rateTypeModels {
-		var rateType io.RateType
-		rateType.ID = rateTypeModel.ID
-		rateType.Rate = rateTypeModel.Rate
-		outputGachaRate.RateTypes.SumRate += rateType.Rate
-		outputGachaRate.RateTypes.RateTypeArray = append(outputGachaRate.RateTypes.RateTypeArray, &rateType)
+	outputGachaRate.GroupProbability = new(io.GroupProbability)
+	for _, groupModel := range groupModels {
+		var gachaProbabilityGroup io.GachaProbabilityGroup
+		groupIDs = append(groupIDs, groupModel.GachaProbabilityGroupID)
+		gachaProbabilityGroup.ID = groupModel.GachaProbabilityGroupID
+		gachaProbabilityGroup.Rate = groupModel.Rate
+		outputGachaRate.GroupProbability.SumRate += groupModel.Rate
+		outputGachaRate.GroupProbability.GachaProbabilityGroups = append(outputGachaRate.GroupProbability.GachaProbabilityGroups, &gachaProbabilityGroup)
 	}
 
 	// キャラごとの確率
-	gachaModels, err := con.Gacha().FindByGachaType(gacha.GachaType)
+	gachaModels, err := con.Gacha().FindByGroupIDs(groupIDs)
 	if err != nil {
 		return outputGachaRate, err
 	}
 
 	//格納
-	charaRates := make(map[int]*io.CharaRates, len(rateTypeModels))
+	charaRates := make(map[string]*io.CharaProbability, len(groupModels))
 	for _, gachaModel := range gachaModels {
 		var charaRate io.CharaRate
 		charaRate.CharaID = gachaModel.CharaID
-		charaRate.RateTypeID = gachaModel.RateTypeID
+		charaRate.GachaProbabilityGroupID = gachaModel.GroupID
 		charaRate.Rate = gachaModel.Rate
-		if _, ok := charaRates[int(charaRate.RateTypeID)]; !ok {
-			charaRates[int(charaRate.RateTypeID)] = new(io.CharaRates)
+		if _, ok := charaRates[charaRate.GachaProbabilityGroupID]; !ok {
+			charaRates[charaRate.GachaProbabilityGroupID] = new(io.CharaProbability)
 		}
-		charaRates[int(charaRate.RateTypeID)].SumRate += charaRate.Rate
-		charaRates[int(charaRate.RateTypeID)].CharaRateArray = append(charaRates[int(charaRate.RateTypeID)].CharaRateArray, &charaRate)
+		charaRates[charaRate.GachaProbabilityGroupID].SumRate += charaRate.Rate
+		charaRates[charaRate.GachaProbabilityGroupID].CharaRates = append(charaRates[charaRate.GachaProbabilityGroupID].CharaRates, &charaRate)
 	}
-	outputGachaRate.CharaRates = charaRates
+	outputGachaRate.CharaProbability = charaRates
 
 	return outputGachaRate, err
 }
@@ -78,20 +80,20 @@ func (gs *gachaService) DrawGacha(ctx context.Context, gacha *input.DrawGacha) (
 
 	// どのレートタイプに当たるか抽選
 	sum := 0
-	targetNum := rand.Intn(gacha.RateTypes.SumRate)
-	var winningRateType int
-	for _, rateType := range gacha.RateTypes.RateTypeArray {
-		sum += rateType.Rate
+	targetNum := rand.Intn(gacha.GroupProbability.SumRate)
+	var winningGroup string
+	for _, group := range gacha.GroupProbability.GachaProbabilityGroups {
+		sum += group.Rate
 		if sum > targetNum {
-			winningRateType = rateType.ID
+			winningGroup = group.ID
 			break
 		}
 	}
 
 	// レートの中のどのキャラに当たるか抽選
 	sum = 0
-	targetNum = rand.Intn(gacha.CharaRates[winningRateType].SumRate)
-	for _, charaRate := range gacha.CharaRates[winningRateType].CharaRateArray {
+	targetNum = rand.Intn(gacha.CharaProbability[winningGroup].SumRate)
+	for _, charaRate := range gacha.CharaProbability[winningGroup].CharaRates {
 		sum += charaRate.Rate
 		if sum > targetNum {
 			outputDrawGacha.CharaID = charaRate.CharaID

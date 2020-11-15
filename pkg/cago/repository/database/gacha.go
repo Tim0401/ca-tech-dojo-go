@@ -4,6 +4,7 @@ import (
 	"ca-tech-dojo-go/pkg/cago/model"
 	"database/sql"
 	"log"
+	"strings"
 )
 
 type dbGachaRepository struct {
@@ -11,16 +12,26 @@ type dbGachaRepository struct {
 	tx *sql.Tx
 }
 
-func (r *dbGachaRepository) FindByGachaType(gachaTypeID int) ([]model.Gacha, error) {
-	var gacha []model.Gacha
+func (r *dbGachaRepository) FindByGroupIDs(groupIDs []string) ([]model.GachaProbability, error) {
+	var gacha []model.GachaProbability
 	var rows *sql.Rows
 	var err error
-	cmd := "SELECT id, chara_id, gacha_type_id, rate_type_id, rate, created_at, updated_at FROM gacha where gacha_type_id = ?"
+
+	if len(groupIDs) <= 0 {
+		return gacha, nil
+	}
+
+	cmd := "SELECT group_id, number, chara_id, rate, created_at, updated_at FROM gacha_probability WHERE group_id IN (?" + strings.Repeat(",?", len(groupIDs)-1) + ")"
+
+	vars := make([]interface{}, 0, len(groupIDs))
+	for _, id := range groupIDs {
+		vars = append(vars, id)
+	}
 
 	if r.db != nil {
-		rows, err = r.db.Query(cmd, gachaTypeID)
+		rows, err = r.db.Query(cmd, vars...)
 	} else {
-		rows, err = r.tx.Query(cmd, gachaTypeID)
+		rows, err = r.tx.Query(cmd, vars...)
 	}
 
 	if err != nil {
@@ -29,8 +40,8 @@ func (r *dbGachaRepository) FindByGachaType(gachaTypeID int) ([]model.Gacha, err
 	}
 
 	for rows.Next() {
-		var gachaRow model.Gacha
-		if err := rows.Scan(&gachaRow.ID, &gachaRow.CharaID, &gachaRow.GachaTypeID, &gachaRow.RateTypeID, &gachaRow.Rate, &gachaRow.CreatedAt, &gachaRow.UpdatedAt); err != nil {
+		var gachaRow model.GachaProbability
+		if err := rows.Scan(&gachaRow.GroupID, &gachaRow.Number, &gachaRow.CharaID, &gachaRow.Rate, &gachaRow.CreatedAt, &gachaRow.UpdatedAt); err != nil {
 			log.Fatal(err)
 			return gacha, err
 		}
