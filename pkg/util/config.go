@@ -12,9 +12,16 @@ type db struct {
 	Dsn      string `json:"dsn" yaml:"dsn"`
 }
 
+type redis struct {
+	Address  string `json:"address" yaml:"address"`
+	Port     string `json:"port" yaml:"port"`
+	Protocol string `json:"protocol" yaml:"protocol"`
+}
+
 // Config アプリケーション設定
 type Config struct {
-	Db db `json:"db" yaml:"db"`
+	Db    db    `json:"db" yaml:"db"`
+	Redis redis `json:"redis" yaml:"redis"`
 }
 
 func LoadConfigForYaml() (*Config, error) {

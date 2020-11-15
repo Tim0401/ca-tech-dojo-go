@@ -48,6 +48,12 @@ https://blog.withnic.net/2018/08/golang%E3%81%A7transaction%E5%87%A6%E7%90%86%E3
 https://www.sambaiz.net/article/189/  
 https://akrfjmt.hatenablog.com/entry/2018/05/15/014455  
 
+### redis 
+
+https://qiita.com/akubi0w1/items/8701c05fe7186ceee632  
+https://qiita.com/gold-kou/items/966d9a0332f4e110c4f8  
+https://qiita.com/riverplus/items/c1df770838d3868c3a13  
+
 ### 外部設定ファイル
 
 https://qiita.com/taka23kz/items/2f7aca381b3b27670fd0  

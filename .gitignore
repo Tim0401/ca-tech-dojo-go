@@ -2,3 +2,4 @@ go.sum
 tmp/
 .vs
 db/data
+redis/*

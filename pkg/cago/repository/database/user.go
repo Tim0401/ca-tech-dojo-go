@@ -61,3 +61,35 @@ func (r *dbUserRepository) UpdateName(name string, UpdatedAt time.Time, id int) 
 	_, err := tx.Exec(cmd, name, UpdatedAt, id)
 	return err
 }
+
+func (r *dbUserRepository) GetAllUserScore() ([]model.UserRanking, error) {
+	var userRanks []model.UserRanking
+	var rows *sql.Rows
+	var err error
+
+	cmd := "SELECT u.id, COUNT(cu.user_id) FROM user u LEFT OUTER JOIN chara_user cu ON u.id = cu.user_id GROUP BY u.id"
+
+	if r.db != nil {
+		rows, err = r.db.Query(cmd)
+	} else {
+		rows, err = r.tx.Query(cmd)
+	}
+
+	if err != nil {
+		return userRanks, err
+	}
+
+	for rows.Next() {
+		var userRankRow model.UserRanking
+		if err := rows.Scan(&userRankRow.UserID, &userRankRow.Score); err != nil {
+			return userRanks, err
+		}
+		userRanks = append(userRanks, userRankRow)
+	}
+
+	if err := rows.Err(); err != nil {
+		return userRanks, err
+	}
+
+	return userRanks, nil
+}

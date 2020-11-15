@@ -27,3 +27,10 @@ services:
     - PMA_PASSWORD=root
     ports:
     - 8081:80
+
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    volumes:
+      - "./redis:/data"
