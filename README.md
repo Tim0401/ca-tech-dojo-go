@@ -81,6 +81,10 @@ https://qiita.com/sonatard/items/5afd13a7640e628ee4d2
 
 https://qiita.com/momotaro98/items/bd24a5d4603e378cc357  
 
+### 負荷
+
+https://qiita.com/chidakiyo/items/f8cdfac7683216a29c56  
+
 ## 設計
 
 ### DI
