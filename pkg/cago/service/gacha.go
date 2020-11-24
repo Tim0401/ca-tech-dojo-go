@@ -8,6 +8,8 @@ import (
 	"context"
 
 	"math/rand"
+
+	"golang.org/x/xerrors"
 )
 
 // GachaService GachaService
@@ -30,13 +32,13 @@ func (gs *gachaService) GetGachaRate(ctx context.Context, gacha *input.GetGachaR
 
 	con, err := gs.r.NewConnection()
 	if err != nil {
-		return outputGachaRate, err
+		return outputGachaRate, xerrors.Errorf("Call NewConnection: %w", err)
 	}
 
 	// 確率タイプ
 	groupModels, err := con.GachaProbabilityGroup().FindByGachaType(gacha.GachaType)
 	if err != nil {
-		return outputGachaRate, err
+		return outputGachaRate, xerrors.Errorf("Call FindByGachaType: %w", err)
 	}
 
 	groupIDs := make([]string, 0, len(groupModels))
@@ -54,7 +56,7 @@ func (gs *gachaService) GetGachaRate(ctx context.Context, gacha *input.GetGachaR
 	// キャラごとの確率
 	gachaModels, err := con.Gacha().FindByGroupIDs(groupIDs)
 	if err != nil {
-		return outputGachaRate, err
+		return outputGachaRate, xerrors.Errorf("Call FindByGroupIDs: %w", err)
 	}
 
 	//格納
@@ -72,7 +74,7 @@ func (gs *gachaService) GetGachaRate(ctx context.Context, gacha *input.GetGachaR
 	}
 	outputGachaRate.CharaProbability = charaRates
 
-	return outputGachaRate, err
+	return outputGachaRate, nil
 }
 
 func (gs *gachaService) DrawGacha(ctx context.Context, gacha *input.DrawGacha) (output.DrawGacha, error) {

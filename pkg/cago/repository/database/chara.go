@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"strings"
 	"time"
+
+	"golang.org/x/xerrors"
 )
 
 type dbCharaRepository struct {
@@ -36,19 +38,19 @@ func (r *dbCharaRepository) FindByIDs(IDs []int) ([]model.Chara, error) {
 	}
 
 	if err != nil {
-		return chara, err
+		return chara, xerrors.Errorf("Call Query: %w", err)
 	}
 
 	for rows.Next() {
 		var charaRow model.Chara
 		if err := rows.Scan(&charaRow.ID, &charaRow.Name, &charaRow.CreatedAt, &charaRow.UpdatedAt); err != nil {
-			return chara, err
+			return chara, xerrors.Errorf("Call Scan: %w", err)
 		}
 		chara = append(chara, charaRow)
 	}
 
 	if err := rows.Err(); err != nil {
-		return chara, err
+		return chara, xerrors.Errorf("Call rows.Err(): %w", err)
 	}
 
 	return chara, nil
@@ -67,19 +69,19 @@ func (r *dbCharaRepository) FindUserCharaByUserID(UserID int) ([]model.CharaUser
 	}
 
 	if err != nil {
-		return userCharas, err
+		return userCharas, xerrors.Errorf("Call Query: %w", err)
 	}
 
 	for rows.Next() {
 		var charaUserRow model.CharaUser
 		if err := rows.Scan(&charaUserRow.ID, &charaUserRow.UserID, &charaUserRow.CharaID, &charaUserRow.CreatedAt, &charaUserRow.UpdatedAt); err != nil {
-			return userCharas, err
+			return userCharas, xerrors.Errorf("Call Scan: %w", err)
 		}
 		userCharas = append(userCharas, charaUserRow)
 	}
 
 	if err := rows.Err(); err != nil {
-		return userCharas, err
+		return userCharas, xerrors.Errorf("Call rows.Err(): %w", err)
 	}
 
 	return userCharas, nil
@@ -101,5 +103,8 @@ func (r *dbCharaRepository) AddUserChara(charaIDs []int, CreatedAt time.Time, us
 	}
 	_, err := tx.Exec(cmd, vars...)
 
-	return err
+	if err != nil {
+		return xerrors.Errorf("Call Exec: %w", err)
+	}
+	return nil
 }

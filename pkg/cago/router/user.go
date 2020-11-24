@@ -4,6 +4,8 @@ import (
 	"ca-tech-dojo-go/pkg/cago/controller"
 	"fmt"
 	"net/http"
+
+	"golang.org/x/xerrors"
 )
 
 type UserRouter interface {
@@ -26,25 +28,29 @@ func (ur *userRouter) UserRouter(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			ur.uc.CreateUser(w, r)
 		} else {
+			err := xerrors.New("Method not allowed")
+			fmt.Printf("%+v\n", err)
 			w.WriteHeader(http.StatusMethodNotAllowed)
-			fmt.Fprint(w, "Method not allowed.\n")
 		}
 	case "/user/get":
 		if r.Method == http.MethodGet {
 			ur.uc.GetUser(w, r)
 		} else {
+			err := xerrors.New("Method not allowed")
+			fmt.Printf("%+v\n", err)
 			w.WriteHeader(http.StatusMethodNotAllowed)
-			fmt.Fprint(w, "Method not allowed.\n")
 		}
 	case "/user/update":
 		if r.Method == http.MethodPut {
 			ur.uc.UpdateUser(w, r)
 		} else {
+			err := xerrors.New("Method not allowed")
+			fmt.Printf("%+v\n", err)
 			w.WriteHeader(http.StatusMethodNotAllowed)
-			fmt.Fprint(w, "Method not allowed.\n")
 		}
 	default:
+		err := xerrors.New("404 Not Found")
+		fmt.Printf("%+v\n", err)
 		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(w, "404 Not Found\n")
 	}
 }

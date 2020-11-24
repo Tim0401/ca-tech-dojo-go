@@ -6,6 +6,8 @@ import (
 	"ca-tech-dojo-go/pkg/cago/service"
 	sInput "ca-tech-dojo-go/pkg/cago/service/input"
 	"context"
+
+	"golang.org/x/xerrors"
 )
 
 // CharaInteractor CharaInteractor
@@ -30,7 +32,7 @@ func (ci *charaInteractor) GetCharaList(ctx context.Context, chara *input.GetCha
 	inputGetUserCharas.UserID = chara.UserID
 	outputGetUserChara, err := ci.cs.GetUserCharas(ctx, &inputGetUserCharas)
 	if err != nil {
-		return outputGetCharaList, err
+		return outputGetCharaList, xerrors.Errorf("Call GetUserCharas: %w", err)
 	}
 
 	charaIDMap := make(map[int]struct{})
@@ -47,7 +49,7 @@ func (ci *charaInteractor) GetCharaList(ctx context.Context, chara *input.GetCha
 	getCharasInput.IDs = charaIDs
 	getCharaOutput, err := ci.cs.GetCharas(ctx, &getCharasInput)
 	if err != nil {
-		return outputGetCharaList, err
+		return outputGetCharaList, xerrors.Errorf("Call GetCharas: %w", err)
 	}
 
 	// 結合

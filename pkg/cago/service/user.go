@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"golang.org/x/xerrors"
 )
 
 // UserService ユーザーサービス
@@ -32,16 +33,16 @@ func (us *userService) GetUser(ctx context.Context, user *input.GetUser) (output
 
 	con, err := us.r.NewConnection()
 	if err != nil {
-		return outputUser, err
+		return outputUser, xerrors.Errorf("Call NewConnection: %w", err)
 	}
 
 	userModel, err := con.User().Find(user.ID)
 	if err != nil {
-		return outputUser, err
+		return outputUser, xerrors.Errorf("Call Find: %w", err)
 	}
 
 	outputUser.Name = userModel.Name
-	return outputUser, err
+	return outputUser, nil
 }
 
 func (us *userService) CreateUser(ctx context.Context, user *input.CreateUser) (output.CreateUser, error) {
@@ -55,20 +56,24 @@ func (us *userService) CreateUser(ctx context.Context, user *input.CreateUser) (
 
 	con, err := us.r.NewConnection()
 	if err != nil {
-		return outputUser, err
+		return outputUser, xerrors.Errorf("Call NewConnection: %w", err)
 	}
 
 	err = con.RunTransaction(func(tx repository.Transaction) error {
 		err := tx.User().Create(&modelUser)
 		if err != nil {
-			return err
+			return xerrors.Errorf("Call Create: %w", err)
 		}
 
 		return nil
 	})
 
+	if err != nil {
+		return outputUser, xerrors.Errorf("Call RunTransaction: %w", err)
+	}
+
 	outputUser.Xtoken = modelUser.Token
-	return outputUser, err
+	return outputUser, nil
 }
 
 func (us *userService) UpdateUser(ctx context.Context, user *input.UpdateUser) (output.UpdateUser, error) {
@@ -77,17 +82,21 @@ func (us *userService) UpdateUser(ctx context.Context, user *input.UpdateUser) (
 
 	con, err := us.r.NewConnection()
 	if err != nil {
-		return outputUser, err
+		return outputUser, xerrors.Errorf("Call NewConnection: %w", err)
 	}
 
 	err = con.RunTransaction(func(tx repository.Transaction) error {
 		err := tx.User().UpdateName(user.Name, time.Now(), user.ID)
 		if err != nil {
-			return err
+			return xerrors.Errorf("Call UpdateName: %w", err)
 		}
 
 		return nil
 	})
 
-	return outputUser, err
+	if err != nil {
+		return outputUser, xerrors.Errorf("Call RunTransaction: %w", err)
+	}
+
+	return outputUser, nil
 }

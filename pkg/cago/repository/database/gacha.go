@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"log"
 	"strings"
+
+	"golang.org/x/xerrors"
 )
 
 type dbGachaRepository struct {
@@ -35,22 +37,21 @@ func (r *dbGachaRepository) FindByGroupIDs(groupIDs []string) ([]model.GachaProb
 	}
 
 	if err != nil {
-		log.Fatal(err)
-		return gacha, err
+		return gacha, xerrors.Errorf("Call Query: %w", err)
 	}
 
 	for rows.Next() {
 		var gachaRow model.GachaProbability
 		if err := rows.Scan(&gachaRow.GroupID, &gachaRow.Number, &gachaRow.CharaID, &gachaRow.Rate, &gachaRow.CreatedAt, &gachaRow.UpdatedAt); err != nil {
 			log.Fatal(err)
-			return gacha, err
+			return gacha, xerrors.Errorf("Call Scan: %w", err)
 		}
 		gacha = append(gacha, gachaRow)
 	}
 
 	if err := rows.Err(); err != nil {
 		log.Fatal(err)
-		return gacha, err
+		return gacha, xerrors.Errorf("Call rows.Err(): %w", err)
 	}
 
 	return gacha, nil

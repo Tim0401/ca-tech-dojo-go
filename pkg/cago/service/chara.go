@@ -7,6 +7,8 @@ import (
 	"ca-tech-dojo-go/pkg/cago/service/output"
 	"context"
 	"time"
+
+	"golang.org/x/xerrors"
 )
 
 // CharaService CharaService
@@ -30,12 +32,12 @@ func (cs *charaService) GetCharas(ctx context.Context, chara *input.GetCharas) (
 
 	con, err := cs.r.NewConnection()
 	if err != nil {
-		return outputGetCharas, err
+		return outputGetCharas, xerrors.Errorf("Call NewConnection: %w", err)
 	}
 
 	charaModels, err := con.Chara().FindByIDs(chara.IDs)
 	if err != nil {
-		return outputGetCharas, err
+		return outputGetCharas, xerrors.Errorf("Call FindByIDs: %w", err)
 	}
 
 	// 格納
@@ -44,7 +46,7 @@ func (cs *charaService) GetCharas(ctx context.Context, chara *input.GetCharas) (
 		outputGetCharas.CharaName[charaModel.ID] = charaModel.Name
 	}
 
-	return outputGetCharas, err
+	return outputGetCharas, nil
 }
 
 func (cs *charaService) AddUserChara(ctx context.Context, chara *input.AddUserChara) (output.AddUserChara, error) {
@@ -52,19 +54,22 @@ func (cs *charaService) AddUserChara(ctx context.Context, chara *input.AddUserCh
 
 	con, err := cs.r.NewConnection()
 	if err != nil {
-		return outputAddUserChara, err
+		return outputAddUserChara, xerrors.Errorf("Call NewConnection: %w", err)
 	}
 
 	err = con.RunTransaction(func(tx repository.Transaction) error {
 		err := tx.Chara().AddUserChara(chara.CharaIDs, time.Now(), chara.UserID)
 		if err != nil {
-			return err
+			return xerrors.Errorf("Call AddUserChara: %w", err)
 		}
 
 		return nil
 	})
 
-	return outputAddUserChara, err
+	if err != nil {
+		return outputAddUserChara, xerrors.Errorf("Call RunTransaction: %w", err)
+	}
+	return outputAddUserChara, nil
 }
 
 func (cs *charaService) GetUserCharas(ctx context.Context, chara *input.GetUserCharas) (output.GetUserCharas, error) {
@@ -72,12 +77,12 @@ func (cs *charaService) GetUserCharas(ctx context.Context, chara *input.GetUserC
 
 	con, err := cs.r.NewConnection()
 	if err != nil {
-		return outputGetUserCharas, err
+		return outputGetUserCharas, xerrors.Errorf("Call NewConnection: %w", err)
 	}
 
 	userCharaModels, err := con.Chara().FindUserCharaByUserID(chara.UserID)
 	if err != nil {
-		return outputGetUserCharas, err
+		return outputGetUserCharas, xerrors.Errorf("Call FindUserCharaByUserID: %w", err)
 	}
 
 	// 格納
@@ -88,5 +93,5 @@ func (cs *charaService) GetUserCharas(ctx context.Context, chara *input.GetUserC
 		outputGetUserCharas.Charas = append(outputGetUserCharas.Charas, userChara)
 	}
 
-	return outputGetUserCharas, err
+	return outputGetUserCharas, nil
 }

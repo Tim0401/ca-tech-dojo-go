@@ -3,8 +3,9 @@ package database
 import (
 	"ca-tech-dojo-go/pkg/cago/model"
 	"database/sql"
-	"log"
 	"time"
+
+	"golang.org/x/xerrors"
 )
 
 type dbUserRepository struct {
@@ -23,8 +24,7 @@ func (r *dbUserRepository) Find(id int) (model.User, error) {
 		row = r.tx.QueryRow(cmd, id)
 	}
 	if err := row.Scan(&user.ID, &user.Name, &user.Token, &user.CreatedAt, &user.UpdatedAt); err != nil {
-		log.Println(err)
-		return user, err
+		return user, xerrors.Errorf("Call Scan: %w", err)
 	}
 
 	return user, nil
@@ -41,8 +41,7 @@ func (r *dbUserRepository) FindByToken(token string) (model.User, error) {
 		row = r.tx.QueryRow(cmd, token)
 	}
 	if err := row.Scan(&user.ID, &user.Name, &user.Token, &user.CreatedAt, &user.UpdatedAt); err != nil {
-		log.Println(err)
-		return user, err
+		return user, xerrors.Errorf("Call Scan: %w", err)
 	}
 
 	return user, nil
@@ -52,14 +51,20 @@ func (r *dbUserRepository) Create(user *model.User) error {
 	tx := r.tx
 	cmd := "INSERT INTO user (name, token, created_at) VALUES (?, ?, ?)"
 	_, err := tx.Exec(cmd, user.Name, user.Token, user.CreatedAt)
-	return err
+	if err != nil {
+		return xerrors.Errorf("Call Exec: %w", err)
+	}
+	return nil
 }
 
 func (r *dbUserRepository) UpdateName(name string, UpdatedAt time.Time, id int) error {
 	tx := r.tx
 	cmd := "UPDATE user SET name = ?, updated_at = ? WHERE id = ?"
 	_, err := tx.Exec(cmd, name, UpdatedAt, id)
-	return err
+	if err != nil {
+		return xerrors.Errorf("Call Exec: %w", err)
+	}
+	return nil
 }
 
 func (r *dbUserRepository) GetAllUserScore() ([]model.UserRanking, error) {
@@ -76,19 +81,19 @@ func (r *dbUserRepository) GetAllUserScore() ([]model.UserRanking, error) {
 	}
 
 	if err != nil {
-		return userRanks, err
+		return userRanks, xerrors.Errorf("Call Query: %w", err)
 	}
 
 	for rows.Next() {
 		var userRankRow model.UserRanking
 		if err := rows.Scan(&userRankRow.UserID, &userRankRow.Score); err != nil {
-			return userRanks, err
+			return userRanks, xerrors.Errorf("Call Scan: %w", err)
 		}
 		userRanks = append(userRanks, userRankRow)
 	}
 
 	if err := rows.Err(); err != nil {
-		return userRanks, err
+		return userRanks, xerrors.Errorf("Call rows.Err(): %w", err)
 	}
 
 	return userRanks, nil

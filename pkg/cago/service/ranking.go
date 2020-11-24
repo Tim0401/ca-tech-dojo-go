@@ -78,5 +78,9 @@ func (rs *rankingService) UpdateUserRanking(ctx context.Context) error {
 		return nil
 	})
 
-	return err
+	if err != nil {
+		return xerrors.Errorf("Call RunTransaction: %w", err)
+	}
+
+	return nil
 }

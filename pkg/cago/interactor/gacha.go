@@ -6,6 +6,8 @@ import (
 	"ca-tech-dojo-go/pkg/cago/service"
 	sInput "ca-tech-dojo-go/pkg/cago/service/input"
 	"context"
+
+	"golang.org/x/xerrors"
 )
 
 // GachaInteractor GachaInteractor
@@ -33,7 +35,7 @@ func (gi *gachaInteractor) DrawGacha(ctx context.Context, gacha *input.DrawGacha
 	getRateInput.GachaType = 1
 	getRateOutput, err := gi.gs.GetGachaRate(ctx, &getRateInput)
 	if err != nil {
-		return out, err
+		return out, xerrors.Errorf("Call GetGachaRate: %w", err)
 	}
 
 	// ガチャ
@@ -44,7 +46,7 @@ func (gi *gachaInteractor) DrawGacha(ctx context.Context, gacha *input.DrawGacha
 	for i := 0; i < int(gacha.Times); i++ {
 		drawGachaOutput, err := gi.gs.DrawGacha(ctx, &drawGachaInput)
 		if err != nil {
-			return out, err
+			return out, xerrors.Errorf("Call DrawGacha: %w", err)
 		}
 		charaIDs = append(charaIDs, drawGachaOutput.CharaID)
 	}
@@ -55,7 +57,7 @@ func (gi *gachaInteractor) DrawGacha(ctx context.Context, gacha *input.DrawGacha
 	addUserCharaInput.UserID = gacha.UserID
 	_, err = gi.cs.AddUserChara(ctx, &addUserCharaInput)
 	if err != nil {
-		return out, err
+		return out, xerrors.Errorf("Call AddUserChara: %w", err)
 	}
 
 	// キャラクター名取得
@@ -63,7 +65,7 @@ func (gi *gachaInteractor) DrawGacha(ctx context.Context, gacha *input.DrawGacha
 	getCharasInput.IDs = charaIDs
 	getCharaOutput, err := gi.cs.GetCharas(ctx, &getCharasInput)
 	if err != nil {
-		return out, err
+		return out, xerrors.Errorf("Call GetCharas: %w", err)
 	}
 
 	for _, charaID := range charaIDs {

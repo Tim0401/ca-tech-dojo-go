@@ -4,6 +4,8 @@ import (
 	"ca-tech-dojo-go/pkg/cago/controller"
 	"fmt"
 	"net/http"
+
+	"golang.org/x/xerrors"
 )
 
 type GachaRouter interface {
@@ -26,11 +28,13 @@ func (gr *gachaRouter) GachaRouter(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			gr.gc.DrawGacha(w, r)
 		} else {
+			err := xerrors.New("Method not allowed")
+			fmt.Printf("%+v\n", err)
 			w.WriteHeader(http.StatusMethodNotAllowed)
-			fmt.Fprint(w, "Method not allowed.\n")
 		}
 	default:
+		err := xerrors.New("404 Not Found")
+		fmt.Printf("%+v\n", err)
 		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(w, "404 Not Found\n")
 	}
 }

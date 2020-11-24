@@ -3,7 +3,8 @@ package database
 import (
 	"ca-tech-dojo-go/pkg/cago/model"
 	"database/sql"
-	"log"
+
+	"golang.org/x/xerrors"
 )
 
 type dbGachaProbabilityGroupRepository struct {
@@ -25,22 +26,19 @@ func (r *dbGachaProbabilityGroupRepository) FindByGachaType(gachaTypeID int) ([]
 	}
 
 	if err != nil {
-		log.Fatal(err)
-		return gachaProbabilityGroups, err
+		return gachaProbabilityGroups, xerrors.Errorf("Call Query: %w", err)
 	}
 
 	for rows.Next() {
 		var gachaProbabilityGroupRow model.GachaProbabilityGroup
 		if err := rows.Scan(&gachaProbabilityGroupRow.GachaTypeID, &gachaProbabilityGroupRow.Number, &gachaProbabilityGroupRow.GachaProbabilityGroupID, &gachaProbabilityGroupRow.Rate, &gachaProbabilityGroupRow.CreatedAt, &gachaProbabilityGroupRow.UpdatedAt); err != nil {
-			log.Fatal(err)
-			return gachaProbabilityGroups, err
+			return gachaProbabilityGroups, xerrors.Errorf("Call Scan: %w", err)
 		}
 		gachaProbabilityGroups = append(gachaProbabilityGroups, gachaProbabilityGroupRow)
 	}
 
 	if err := rows.Err(); err != nil {
-		log.Fatal(err)
-		return gachaProbabilityGroups, err
+		return gachaProbabilityGroups, xerrors.Errorf("Call rows.Err(): %w", err)
 	}
 
 	return gachaProbabilityGroups, nil
