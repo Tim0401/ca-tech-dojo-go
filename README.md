@@ -3,6 +3,10 @@
 https://techbowl.co.jp/techtrain/missions/12
 https://github.com/CyberAgentHack/techtrain-mission  
 
+## 概要ブログ記事
+
+https://dreamer.cyou/articles/5fd78d59551c83001c0c4197  
+
 ## API仕様
 
 https://github.com/CyberAgentHack/techtrain-mission/blob/master/api-document.yaml  
