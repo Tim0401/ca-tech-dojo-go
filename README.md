@@ -48,6 +48,16 @@ go run main.go
 go run update.go
 ```
 
+
+### 負荷計測
+
+vegetaを使用して負荷とレスポンス速度の計測  
+
+`vegeta`にて  
+```
+vegeta attack -rate=10 -duration=5s -targets=gacha.txt | vegeta report
+```
+
 ## 以下参考サイト
 
 ## 環境構築
