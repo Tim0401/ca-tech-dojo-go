@@ -8,6 +8,7 @@ require (
 	github.com/go-yaml/yaml v2.1.0+incompatible
 	github.com/golang/mock v1.5.0
 	github.com/gomodule/redigo v1.8.2
+	github.com/google/go-cmp v0.5.5 // indirect
 	github.com/google/pprof v0.0.0-20210226084205-cbba55b83ad5 // indirect
 	github.com/google/uuid v1.1.2
 	github.com/google/wire v0.5.0 // indirect
@@ -17,6 +18,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mayah/go-repository-sample v0.0.0-20191224151932-20159e193862 // indirect
 	github.com/pkg/errors v0.9.1
+	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/tsenart/go-tsz v0.0.0-20180814235614-0bd30b3df1c3 // indirect
 	github.com/tsenart/vegeta v12.7.0+incompatible // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect

@@ -261,6 +261,21 @@ func (mr *MockUserQueryMockRecorder) Find(id interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockUserQuery)(nil).Find), id)
 }
 
+// FindByIDs mocks base method.
+func (m *MockUserQuery) FindByIDs(IDs []int) ([]model.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindByIDs", IDs)
+	ret0, _ := ret[0].([]model.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindByIDs indicates an expected call of FindByIDs.
+func (mr *MockUserQueryMockRecorder) FindByIDs(IDs interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByIDs", reflect.TypeOf((*MockUserQuery)(nil).FindByIDs), IDs)
+}
+
 // FindByToken mocks base method.
 func (m *MockUserQuery) FindByToken(token string) (model.User, error) {
 	m.ctrl.T.Helper()
@@ -341,6 +356,21 @@ func (m *MockUserCommand) Find(id int) (model.User, error) {
 func (mr *MockUserCommandMockRecorder) Find(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockUserCommand)(nil).Find), id)
+}
+
+// FindByIDs mocks base method.
+func (m *MockUserCommand) FindByIDs(IDs []int) ([]model.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindByIDs", IDs)
+	ret0, _ := ret[0].([]model.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindByIDs indicates an expected call of FindByIDs.
+func (mr *MockUserCommandMockRecorder) FindByIDs(IDs interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByIDs", reflect.TypeOf((*MockUserCommand)(nil).FindByIDs), IDs)
 }
 
 // FindByToken mocks base method.

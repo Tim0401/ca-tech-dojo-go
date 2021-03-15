@@ -114,6 +114,14 @@ vegeta attack -rate=100 -duration=60s -targets=gacha.txt | vegeta report
 pprof -http=:22222 [path]
 ```
 
+### test
+
+mock作成(repository)  
+```
+mockgen -source repository.go -destination mock_repository/mock_repository.go 
+```
+
+
 ## 以下参考サイト
 
 ## 環境構築
@@ -176,6 +184,7 @@ https://qiita.com/nayuneko/items/2ec20ba69804e8bf7ca3
 ### 構造体
 
 https://qiita.com/k-penguin-sato/items/62dfe0f93f56e4bf9157  
+https://github.com/google/go-cmp  
 
 ### error
 
@@ -191,6 +200,11 @@ https://medium.com/eureka-engineering/go%E8%A8%80%E8%AA%9E%E3%81%AE%E3%83%97%E3%
 ### 負荷
 
 https://qiita.com/chidakiyo/items/f8cdfac7683216a29c56  
+
+### test_mock
+
+https://qiita.com/tenntenn/items/24fc34ec0c31f6474e6d  
+https://qiita.com/JpnLavender/items/21b4574a7513472903ea  
 
 ## 設計
 
