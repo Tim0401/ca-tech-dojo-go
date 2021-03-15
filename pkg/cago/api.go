@@ -1,14 +1,7 @@
 package cago
 
 import (
-	"ca-tech-dojo-go/pkg/cago/controller"
-	"ca-tech-dojo-go/pkg/cago/interactor"
 	"ca-tech-dojo-go/pkg/cago/middleware"
-	"ca-tech-dojo-go/pkg/cago/presenter"
-	redisRepository "ca-tech-dojo-go/pkg/cago/repository/cache/redis"
-	"ca-tech-dojo-go/pkg/cago/repository/database"
-	"ca-tech-dojo-go/pkg/cago/router"
-	"ca-tech-dojo-go/pkg/cago/service"
 	"ca-tech-dojo-go/pkg/util"
 	"database/sql"
 	"net/http"
@@ -17,15 +10,15 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-// Serve エントリーポイント
-func Serve(config *util.Config) {
-
+func NewDB(config *util.Config) *sql.DB {
 	db, err := sql.Open(config.Db.DbDriver, config.Db.Dsn)
 	if err != nil {
 		panic(err.Error())
 	}
-	defer db.Close()
+	return db
+}
 
+func NewRedis(config *util.Config) *redis.Pool {
 	pool := &redis.Pool{
 		MaxIdle:     3,
 		MaxActive:   0,
@@ -35,39 +28,27 @@ func Serve(config *util.Config) {
 		},
 	}
 
-	redisRepo := redisRepository.NewRepository(pool)
-	repository := database.NewRepository(db)
+	return pool
+}
 
-	// user
-	us := service.NewUserService(repository)
-	ui := interactor.NewUserInteractor(us)
-	up := presenter.NewUserPresenter()
-	uc := controller.NewUserController(ui, up)
-	ur := router.NewUserRouter(uc)
+func NewConfig() *util.Config {
+	// config読み込み
+	config, err := util.LoadConfigForYaml()
+	if err != nil {
+		panic(err.Error())
+	}
+	return config
+}
 
-	// gacha
-	gs := service.NewGachaService(repository)
-	cs := service.NewCharaService(repository)
-	gi := interactor.NewGachaInteractor(gs, cs)
-	gp := presenter.NewGachaPresenter()
-	gc := controller.NewGachaController(gi, gp)
-	gr := router.NewGachaRouter(gc)
+// Serve エントリーポイント
+func Serve() {
 
-	// character
-	ci := interactor.NewCharaInteractor(cs)
-	cp := presenter.NewCharaPresenter()
-	cc := controller.NewCharaController(ci, cp)
-	cr := router.NewCharaRouter(cc)
+	ur := InitUserRouter()
+	gr := InitGachaRouter()
+	cr := InitCharaRouter()
+	rr := InitRankingRouter()
 
-	// ranking
-	rs := service.NewRankingService(repository, redisRepo)
-	ri := interactor.NewRankingInteractor(rs, us)
-	rp := presenter.NewRankingPresenter()
-	rc := controller.NewRankingController(ri, rp)
-	rr := router.NewRankingRouter(rc)
-
-	// middleware
-	authMiddleware := middleware.NewAuthMiddleware(repository)
+	authMiddleware := InitMiddleware()
 	middlewares := middleware.NewMws(authMiddleware)
 
 	mux := http.NewServeMux()

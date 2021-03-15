@@ -26,18 +26,11 @@ func init() {
 	}
 	time.Local = loc
 
-	// config読み込み
-	config, err := util.LoadConfigForYaml()
-	if err != nil {
-		panic(err.Error())
-	}
-	gConfig = config
-
 	// 乱数シード
 	seed, _ := crand.Int(crand.Reader, big.NewInt(math.MaxInt64))
 	rand.Seed(seed.Int64())
 }
 
 func main() {
-	cago.Serve(gConfig)
+	cago.Serve()
 }

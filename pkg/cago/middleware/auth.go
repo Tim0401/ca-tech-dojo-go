@@ -7,16 +7,16 @@ import (
 	"net/http"
 )
 
-type authMiddleware struct {
+type AuthMiddleware struct {
 	r repository.Repository
 }
 
 // NewAuthMiddleware ユーザーRouter作成
 func NewAuthMiddleware(r repository.Repository) Middleware {
-	return &authMiddleware{r}
+	return &AuthMiddleware{r}
 }
 
-func (am *authMiddleware) exec(next http.HandlerFunc) http.HandlerFunc {
+func (am *AuthMiddleware) exec(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// ユーザー認証
 		con, err := am.r.NewConnection()
