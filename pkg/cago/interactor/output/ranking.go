@@ -1,7 +1,7 @@
 package output
 
 type GetUserRanking struct {
-	Ranks []UserRank
+	Ranks []*UserRank
 }
 
 type UserRank struct {

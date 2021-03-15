@@ -6,6 +6,7 @@ import (
 	"ca-tech-dojo-go/pkg/cago/presenter"
 	pInput "ca-tech-dojo-go/pkg/cago/presenter/input"
 	"net/http"
+	"strconv"
 
 	"golang.org/x/xerrors"
 )
@@ -28,8 +29,19 @@ func (rc *rankingController) GetUserRanking(w http.ResponseWriter, r *http.Reque
 
 	ctx := r.Context()
 
-	var interactorInput iInput.GetUserRanking
-	outputGetUserRanking, err := rc.ri.GetUserRanking(ctx, &interactorInput)
+	v := r.URL.Query()
+	top := v.Get("$Top")
+	skip := v.Get("$Skip")
+	intTop, err := strconv.ParseInt(top, 10, 32)
+	if err != nil {
+		intTop = 100
+	}
+	intSkip, err := strconv.ParseInt(skip, 10, 32)
+	if err != nil {
+		intSkip = 0
+	}
+
+	outputGetUserRanking, err := rc.ri.GetUserRanking(ctx, &iInput.GetUserRanking{Top: int(intTop), Skip: int(intSkip)})
 	if err != nil {
 		var presenterError pInput.ShowError
 		presenterError.E = xerrors.Errorf("Call GetUserRanking: %w", err)

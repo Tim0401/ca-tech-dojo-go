@@ -19,7 +19,7 @@ type Transaction interface {
 }
 
 type RankingQuery interface {
-	Top(limit int) ([]model.UserRanking, error)
+	Top(limit int, offset int) ([]model.UserRanking, error)
 }
 
 type RankingCommand interface {

@@ -27,6 +27,7 @@ type Transaction interface {
 
 type UserQuery interface {
 	Find(id int) (model.User, error)
+	FindByIDs(IDs []int) ([]model.User, error)
 	FindByToken(token string) (model.User, error)
 	GetAllUserScore() ([]model.UserRanking, error)
 }

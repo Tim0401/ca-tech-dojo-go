@@ -12,9 +12,9 @@ type redisRankingRepository struct {
 	conn redis.Conn
 }
 
-func (r *redisRankingRepository) Top(limit int) ([]model.UserRanking, error) {
+func (r *redisRankingRepository) Top(limit int, offset int) ([]model.UserRanking, error) {
 	var userRanks []model.UserRanking
-	strs, err := redis.Strings(r.conn.Do("ZREVRANGE", "user_ranking", 0, limit, "WITHSCORES"))
+	strs, err := redis.Strings(r.conn.Do("ZREVRANGE", "user_ranking", offset, offset+limit-1, "WITHSCORES"))
 	if err != nil {
 		return userRanks, xerrors.Errorf("Call Top: %w", err)
 	}
@@ -28,7 +28,7 @@ func (r *redisRankingRepository) Top(limit int) ([]model.UserRanking, error) {
 		if err != nil {
 			return userRanks, xerrors.Errorf("Call Atoi: %w", err)
 		}
-		userRank.Rank = (i + 2) / 2
+		userRank.Rank = (i+2)/2 + offset
 
 		userRanks = append(userRanks, userRank)
 	}

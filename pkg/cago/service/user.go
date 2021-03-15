@@ -17,6 +17,7 @@ type UserService interface {
 	CreateUser(ctx context.Context, user *input.CreateUser) (output.CreateUser, error)
 	GetUser(ctx context.Context, user *input.GetUser) (output.GetUser, error)
 	UpdateUser(ctx context.Context, user *input.UpdateUser) (output.UpdateUser, error)
+	GetUsers(ctx context.Context, users []*input.GetUser) ([]*output.GetUser, error)
 }
 
 type userService struct {
@@ -43,6 +44,34 @@ func (us *userService) GetUser(ctx context.Context, user *input.GetUser) (output
 
 	outputUser.Name = userModel.Name
 	return outputUser, nil
+}
+
+func (us *userService) GetUsers(ctx context.Context, users []*input.GetUser) ([]*output.GetUser, error) {
+	var outputUsers []*output.GetUser
+
+	con, err := us.r.NewConnection()
+	if err != nil {
+		return outputUsers, xerrors.Errorf("Call NewConnection: %w", err)
+	}
+
+	var IDs []int
+	for _, user := range users {
+		IDs = append(IDs, user.ID)
+	}
+
+	userModel, err := con.User().FindByIDs(IDs)
+	if err != nil {
+		return outputUsers, xerrors.Errorf("Call Find: %w", err)
+	}
+
+	for _, user := range userModel {
+		outputUsers = append(outputUsers, &output.GetUser{
+			ID:   user.ID,
+			Name: user.Name,
+		})
+	}
+
+	return outputUsers, nil
 }
 
 func (us *userService) CreateUser(ctx context.Context, user *input.CreateUser) (output.CreateUser, error) {

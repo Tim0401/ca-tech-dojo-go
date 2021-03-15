@@ -3,6 +3,7 @@ package database
 import (
 	"ca-tech-dojo-go/pkg/cago/model"
 	"database/sql"
+	"strings"
 	"time"
 
 	"golang.org/x/xerrors"
@@ -25,6 +26,48 @@ func (r *dbUserRepository) Find(id int) (model.User, error) {
 	}
 	if err := row.Scan(&user.ID, &user.Name, &user.Token, &user.CreatedAt, &user.UpdatedAt); err != nil {
 		return user, xerrors.Errorf("Call Scan: %w", err)
+	}
+
+	return user, nil
+}
+
+func (r *dbUserRepository) FindByIDs(IDs []int) ([]model.User, error) {
+	var user []model.User
+	var rows *sql.Rows
+	var err error
+
+	if len(IDs) <= 0 {
+		return user, nil
+	}
+
+	cmd := "SELECT id, name, token, created_at, updated_at FROM user WHERE id IN (?" + strings.Repeat(",?", len(IDs)-1) + ")"
+
+	vars := make([]interface{}, 0, len(IDs))
+
+	for _, id := range IDs {
+		vars = append(vars, id)
+	}
+
+	if r.db != nil {
+		rows, err = r.db.Query(cmd, vars...)
+	} else {
+		rows, err = r.tx.Query(cmd, vars...)
+	}
+
+	if err != nil {
+		return user, xerrors.Errorf("Call Query: %w", err)
+	}
+
+	for rows.Next() {
+		var userRow model.User
+		if err := rows.Scan(&userRow.ID, &userRow.Name, &userRow.Token, &userRow.CreatedAt, &userRow.UpdatedAt); err != nil {
+			return user, xerrors.Errorf("Call Scan: %w", err)
+		}
+		user = append(user, userRow)
+	}
+
+	if err := rows.Err(); err != nil {
+		return user, xerrors.Errorf("Call rows.Err(): %w", err)
 	}
 
 	return user, nil

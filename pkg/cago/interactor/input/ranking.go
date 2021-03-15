@@ -1,3 +1,6 @@
 package input
 
-type GetUserRanking struct{}
+type GetUserRanking struct {
+	Top  int
+	Skip int
+}
