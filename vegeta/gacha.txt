@@ -3,3 +3,28 @@ Content-Type: application/json
 accept: application/json
 x-token: testtoken1
 @gacha.json
+
+POST http://localhost:8080/gacha/draw
+Content-Type: application/json
+accept: application/json
+x-token: testtoken2
+@gacha.json
+
+POST http://localhost:8080/gacha/draw
+Content-Type: application/json
+accept: application/json
+x-token: testtoken3
+@gacha.json
+
+POST http://localhost:8080/gacha/draw
+Content-Type: application/json
+accept: application/json
+x-token: testtoken4
+@gacha.json
+
+POST http://localhost:8080/gacha/draw
+Content-Type: application/json
+accept: application/json
+x-token: testtoken5
+@gacha.json
+
