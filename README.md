@@ -10,10 +10,45 @@ https://dreamer.cyou/articles/5fd78d59551c83001c0c4197
 ## API仕様
 
 https://github.com/CyberAgentHack/techtrain-mission/blob/master/api-document.yaml  
-
-### swagger editor
-
+https://github.com/CyberAgentHack/techtrain-mission  の内容が基本なので、SwaggerEditorで確認しながらPostman等で叩く。  
 https://editor.swagger.io/  
+
+### 追加仕様
+
+ガチャで取得したキャラに応じてランキング機能を実装。  
+取得用データはRedisで保持し、goのコマンドを叩いてデータを更新する。(コマンドは下の項に記載)  
+
+|url|説明|param|
+|--|--|--|
+|/ranking/user?$Top=5&$Skip=0|ランキングを取得する|$Top:取得数(デフォルト:100) $Skip:取得をスキップする行数(デフォルト:0 → 1位から取得)|
+
+### 実行
+
+```bash
+docker-compose up -d   // Dockerコンテナ群起動
+bash init-mysql.sh     // db初期化
+```
+
+|service|host:port|
+|--|--|
+|Mysql|localhost:3306|
+|phpmyadmin|localhost:8081|
+|Redis|localhost:6379|
+|redisinsight|localhost:8001|
+
+アプリケーション起動  
+`cmd/cago`にて
+```
+go run main.go
+```
+
+ランキングRedis更新  
+`cmd/update`にて
+```
+go run update.go
+```
+
+## 以下参考サイト
 
 ## 環境構築
 
