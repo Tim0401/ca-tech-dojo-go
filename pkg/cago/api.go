@@ -2,6 +2,7 @@ package cago
 
 import (
 	"ca-tech-dojo-go/pkg/cago/middleware"
+	"ca-tech-dojo-go/pkg/cago/repository/database"
 	"ca-tech-dojo-go/pkg/util"
 	"database/sql"
 	"net/http"
@@ -10,15 +11,26 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
+var sqlDB *sql.DB = nil
+var redisPool *redis.Pool = nil
+
 func NewDB(config *util.Config) *sql.DB {
+	if sqlDB != nil {
+		return sqlDB
+	}
 	db, err := sql.Open(config.Db.DbDriver, config.Db.Dsn)
 	if err != nil {
 		panic(err.Error())
 	}
+	database.InitChara(db)
+	sqlDB = db
 	return db
 }
 
 func NewRedis(config *util.Config) *redis.Pool {
+	if redisPool != nil {
+		return redisPool
+	}
 	pool := &redis.Pool{
 		MaxIdle:     3,
 		MaxActive:   0,
@@ -27,7 +39,7 @@ func NewRedis(config *util.Config) *redis.Pool {
 			return redis.Dial(config.Redis.Protocol, config.Redis.Address+":"+config.Redis.Port)
 		},
 	}
-
+	redisPool = pool
 	return pool
 }
 
