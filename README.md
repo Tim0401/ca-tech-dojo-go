@@ -55,17 +55,63 @@ vegetaを使用して負荷とレスポンス速度の計測
 
 #### 結果
 
+単発ガチャを大量に引いた際、Chara情報をSQLで取得する場合とメモリに保持しておく場合で速度の違いを見る。  
+1~1.5ms/req程度メモリに保持したほうが早い模様。  
+ガチャAPIはキャラ名を返却するため、その取得分が早くなっていると見られる。  
+
 `vegeta`にて  
+通常(キャラ情報をSQLで所得)  
 ```
-$ vegeta attack -rate=100 -duration=5s -targets=charaList.txt | vegeta report
-Requests      [total, rate, throughput]  500, 100.19, 100.11
-Duration      [total, attack, wait]      4.9945245s, 4.9905789s, 3.9456ms
-Latencies     [mean, 50, 95, 99, max]    5.14256ms, 4.591261ms, 8.329605ms, 9.07725ms, 15.8131ms
-Bytes In      [total, mean]              3118300, 6236.60
-Bytes Out     [total, mean]              0, 0.00
+$ vegeta attack -rate=100 -duration=60s -targets=gacha.txt | vegeta report
+Requests      [total, rate, throughput]  6000, 100.02, 100.00
+Duration      [total, attack, wait]      59.9996761s, 59.9896736s, 10.0025ms
+Latencies     [mean, 50, 95, 99, max]    10.569503ms, 10.001291ms, 12.739868ms, 14.99445ms, 93.0019ms
+Bytes In      [total, mean]              306150, 51.02
+Bytes Out     [total, mean]              108000, 18.00
 Success       [ratio]                    100.00%
-Status Codes  [code:count]               200:500
+Status Codes  [code:count]               200:6000
+
+$ vegeta attack -rate=100 -duration=60s -targets=gacha.txt | vegeta report
+Requests      [total, rate, throughput]  6000, 100.02, 100.00
+Duration      [total, attack, wait]      1m0.002079s, 59.9903797s, 11.6993ms
+Latencies     [mean, 50, 95, 99, max]    10.776649ms, 10.632541ms, 12.999784ms, 15.163394ms, 35.0004ms
+Bytes In      [total, mean]              306138, 51.02
+Bytes Out     [total, mean]              108000, 18.00
+Success       [ratio]                    100.00%
+Status Codes  [code:count]               200:6000
 Error Set:
+Error Set:
+```
+
+オンメモリ(キャラ情報をメモリ上にマップで保持)  
+```
+$ vegeta attack -rate=100 -duration=60s -targets=gacha.txt | vegeta report
+Requests      [total, rate, throughput]  6000, 100.02, 100.00
+Duration      [total, attack, wait]      59.9998042s, 59.9908029s, 9.0013ms
+Latencies     [mean, 50, 95, 99, max]    9.258858ms, 9.000078ms, 11.776279ms, 15.228509ms, 47.7966ms
+Bytes In      [total, mean]              306144, 51.02
+Bytes Out     [total, mean]              108000, 18.00
+Success       [ratio]                    100.00%
+Status Codes  [code:count]               200:6000
+Error Set:
+
+$ vegeta attack -rate=100 -duration=60s -targets=gacha.txt | vegeta report
+Requests      [total, rate, throughput]  6000, 100.02, 100.00
+Duration      [total, attack, wait]      59.9999435s, 59.9909431s, 9.0004ms
+Latencies     [mean, 50, 95, 99, max]    9.296305ms, 9.000012ms, 11.402482ms, 17.018502ms, 62.2419ms
+Bytes In      [total, mean]              306160, 51.03
+Bytes Out     [total, mean]              108000, 18.00
+Success       [ratio]                    100.00%
+Status Codes  [code:count]               200:6000
+Error Set:
+```
+
+### pprof
+
+```
+go tool pprof -http=":22222" http://localhost:8080/debug/pprof/profile?seconds=70
+vegeta attack -rate=100 -duration=60s -targets=gacha.txt | vegeta report
+pprof -http=:22222 [path]
 ```
 
 ## 以下参考サイト
@@ -139,6 +185,8 @@ https://qiita.com/sonatard/items/5afd13a7640e628ee4d2
 ### pprof
 
 https://qiita.com/momotaro98/items/bd24a5d4603e378cc357  
+https://zenn.dev/muroon/articles/adf577f563c806  
+https://medium.com/eureka-engineering/go%E8%A8%80%E8%AA%9E%E3%81%AE%E3%83%97%E3%83%AD%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AA%E3%83%B3%E3%82%B0%E3%83%84%E3%83%BC%E3%83%AB-pprof%E3%81%AEweb-ui%E3%81%8C%E3%82%81%E3%81%A1%E3%82%83%E3%81%8F%E3%81%A1%E3%82%83%E4%BE%BF%E5%88%A9%E3%81%AA%E3%81%AE%E3%81%A7%E7%B4%B9%E4%BB%8B%E3%81%99%E3%82%8B-6a34a489c9ee  
 
 ### 負荷
 

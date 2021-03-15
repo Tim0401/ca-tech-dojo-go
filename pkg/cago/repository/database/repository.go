@@ -74,6 +74,7 @@ func (con *dbConnection) Gacha() repository.GachaQuery {
 
 func (con *dbConnection) Chara() repository.CharaQuery {
 	return &dbCharaMemoryRepository{db: con.db}
+	// return &dbCharaRepository{db: con.db}
 }
 
 func (tx *dbTransaction) Chara() repository.CharaCommand {
