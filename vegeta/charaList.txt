@@ -1,0 +1,19 @@
+GET http://localhost:8080/character/list
+accept: application/json
+x-token: testtoken1
+
+GET http://localhost:8080/character/list
+accept: application/json
+x-token: testtoken2
+
+GET http://localhost:8080/character/list
+accept: application/json
+x-token: testtoken3
+
+GET http://localhost:8080/character/list
+accept: application/json
+x-token: testtoken4
+
+GET http://localhost:8080/character/list
+accept: application/json
+x-token: testtoken5

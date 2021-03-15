@@ -53,9 +53,19 @@ go run update.go
 
 vegetaを使用して負荷とレスポンス速度の計測  
 
+#### 結果
+
 `vegeta`にて  
 ```
-vegeta attack -rate=10 -duration=5s -targets=gacha.txt | vegeta report
+$ vegeta attack -rate=100 -duration=5s -targets=charaList.txt | vegeta report
+Requests      [total, rate, throughput]  500, 100.19, 100.11
+Duration      [total, attack, wait]      4.9945245s, 4.9905789s, 3.9456ms
+Latencies     [mean, 50, 95, 99, max]    5.14256ms, 4.591261ms, 8.329605ms, 9.07725ms, 15.8131ms
+Bytes In      [total, mean]              3118300, 6236.60
+Bytes Out     [total, mean]              0, 0.00
+Success       [ratio]                    100.00%
+Status Codes  [code:count]               200:500
+Error Set:
 ```
 
 ## 以下参考サイト

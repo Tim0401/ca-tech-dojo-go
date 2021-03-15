@@ -12,12 +12,13 @@ require (
 	github.com/google/wire v0.5.0 // indirect
 	github.com/influxdata/tdigest v0.0.1 // indirect
 	github.com/jinzhu/gorm v1.9.16
-	github.com/mailru/easyjson v0.7.6 // indirect
+	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mayah/go-repository-sample v0.0.0-20191224151932-20159e193862 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/tsenart/go-tsz v0.0.0-20180814235614-0bd30b3df1c3 // indirect
 	github.com/tsenart/vegeta v12.7.0+incompatible // indirect
-	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b // indirect
-	golang.org/x/text v0.3.4 // indirect
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
+	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110 // indirect
+	golang.org/x/text v0.3.5 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
 )
