@@ -18,7 +18,26 @@ func (r *redisRankingRepository) Top(limit int, offset int) ([]model.UserRanking
 	if err != nil {
 		return userRanks, xerrors.Errorf("Call Top: %w", err)
 	}
+
+	// 結果が空の場合
+	if len(strs) < 1 {
+		return userRanks, nil
+	}
+
+	// ランク開始位置を取得
+	score, err := strconv.ParseInt(strs[1], 10, 32)
+	if err != nil {
+		return userRanks, xerrors.Errorf("Call ParseInt: %w", err)
+	}
+	count, err := redis.Int(r.conn.Do("ZCOUNT", "user_ranking", score+1, "+inf"))
+	if err != nil {
+		return userRanks, xerrors.Errorf("Call ZCOUNT: %w", err)
+	}
+	baseRank := count + 1
+	stockRank := offset
+
 	for i := 0; i < len(strs); i += 2 {
+
 		var userRank model.UserRanking
 		userRank.UserID, err = strconv.Atoi(strs[i])
 		if err != nil {
@@ -28,8 +47,14 @@ func (r *redisRankingRepository) Top(limit int, offset int) ([]model.UserRanking
 		if err != nil {
 			return userRanks, xerrors.Errorf("Call Atoi: %w", err)
 		}
-		userRank.Rank = (i+2)/2 + offset
+		// ランク判定
+		stockRank += 1
+		// 前のスコアと異なるならランクを現在のものに下げる
+		if i > 0 && strs[i-1] != strs[i+1] {
+			baseRank = stockRank
+		}
 
+		userRank.Rank = int(baseRank)
 		userRanks = append(userRanks, userRank)
 	}
 
