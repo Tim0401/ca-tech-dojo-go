@@ -43,6 +43,14 @@ func InitGachaRouter() router.GachaRouter {
 	return nil
 }
 
+func InitRankingService() service.RankingService {
+	wire.Build(
+		SuperSet,
+		service.NewRankingService,
+	)
+	return nil
+}
+
 func InitCharaRouter() router.CharaRouter {
 	wire.Build(
 		SuperSet,

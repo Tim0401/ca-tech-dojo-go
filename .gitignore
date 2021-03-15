@@ -4,3 +4,5 @@ tmp/
 db/data
 redis/*
 redisinsight/*
+
+__debug_bin

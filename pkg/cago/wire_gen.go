@@ -44,6 +44,16 @@ func InitGachaRouter() router.GachaRouter {
 	return gachaRouter
 }
 
+func InitRankingService() service.RankingService {
+	config := NewConfig()
+	db := NewDB(config)
+	repository := database.NewRepository(db)
+	pool := NewRedis(config)
+	cacheRepository := redis.NewRepository(pool)
+	rankingService := service.NewRankingService(repository, cacheRepository)
+	return rankingService
+}
+
 func InitCharaRouter() router.CharaRouter {
 	config := NewConfig()
 	db := NewDB(config)
