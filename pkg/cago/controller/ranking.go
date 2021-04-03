@@ -30,6 +30,7 @@ func (rc *rankingController) GetUserRanking(w http.ResponseWriter, r *http.Reque
 	ctx := r.Context()
 
 	v := r.URL.Query()
+	// TODO: リクエストの値のバリデーション
 	top := v.Get("$Top")
 	skip := v.Get("$Skip")
 	intTop, err := strconv.ParseInt(top, 10, 32)
